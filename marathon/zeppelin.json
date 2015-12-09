@@ -1,0 +1,17 @@
+{
+  "id": "zeppelin",
+  "cpus": 2,
+  "mem": 12288,
+  "instances": 1,
+  "cmd": "chmod +x deploy-zeppelin.sh && ./deploy-zeppelin.sh",
+  "ports":[4040,31988],
+  "requirePorts": true,
+  "uris": [
+    "http://repo.elodina.s3.amazonaws.com/zeppelin-0.5.5-incubating-bin-all.tgz",
+    "http://repo.elodina.s3.amazonaws.com/zeppelin-env.sh",
+    "http://repo.elodina.s3.amazonaws.com/notebook.tar.gz",
+    "http://repo.elodina.s3.amazonaws.com/notebook-deps.tar.gz",
+    "http://repo.elodina.s3.amazonaws.com/interpreter.json",
+    "http://repo.elodina.s3.amazonaws.com/deploy-zeppelin.sh"
+  ]
+}

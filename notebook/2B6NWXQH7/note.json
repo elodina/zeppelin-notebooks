@@ -1,0 +1,210 @@
+{
+  "paragraphs": [
+    {
+      "text": "%sql\nSELECT * from collectdCPU where typeInstance \u003d \"${type\u003didle}\" and hostname \u003d \"${hostname\u003dip-172-29-47-108.node.mesosinfra}\"",
+      "dateUpdated": "Dec 7, 2015 2:20:39 PM",
+      "config": {
+        "colWidth": 12.0,
+        "graph": {
+          "mode": "lineChart",
+          "height": 300.0,
+          "optionOpen": true,
+          "keys": [
+            {
+              "name": "time",
+              "index": 3.0,
+              "aggr": "sum"
+            }
+          ],
+          "values": [
+            {
+              "name": "value",
+              "index": 2.0,
+              "aggr": "sum"
+            }
+          ],
+          "groups": [
+            {
+              "name": "hostname",
+              "index": 0.0,
+              "aggr": "sum"
+            }
+          ],
+          "scatter": {
+            "yAxis": {
+              "name": "value",
+              "index": 2.0,
+              "aggr": "sum"
+            },
+            "xAxis": {
+              "name": "time",
+              "index": 3.0,
+              "aggr": "sum"
+            }
+          }
+        },
+        "editorMode": "ace/mode/sql"
+      },
+      "settings": {
+        "params": {
+          "hostname": "ip-172-29-47-108.node.mesosinfra",
+          "type": "idle"
+        },
+        "forms": {
+          "hostname": {
+            "name": "hostname",
+            "defaultValue": "ip-172-29-47-108.node.mesosinfra",
+            "hidden": false
+          },
+          "type": {
+            "name": "type",
+            "defaultValue": "idle",
+            "hidden": false
+          }
+        }
+      },
+      "jobName": "paragraph_1449140247631_-1003027554",
+      "id": "20151203-105727_1211443284",
+      "result": {
+        "code": "SUCCESS",
+        "type": "TABLE",
+        "msg": "hostname\ttypeInstance\tvalue\ttime\nip-172-29-47-108.node.mesosinfra\tidle\t99.13585680768574\t1449497765233\nip-172-29-47-108.node.mesosinfra\tidle\t99.21186803693553\t1449497775233\nip-172-29-47-108.node.mesosinfra\tidle\t98.83071385432333\t1449497785233\nip-172-29-47-108.node.mesosinfra\tidle\t99.16075540271204\t1449497795233\nip-172-29-47-108.node.mesosinfra\tidle\t99.23605801803818\t1449497805233\nip-172-29-47-108.node.mesosinfra\tidle\t99.18646234738566\t1449497815233\n"
+      },
+      "dateCreated": "Dec 3, 2015 10:57:27 AM",
+      "dateStarted": "Dec 7, 2015 2:17:05 PM",
+      "dateFinished": "Dec 7, 2015 2:19:34 PM",
+      "status": "FINISHED",
+      "progressUpdateIntervalMs": 500
+    },
+    {
+      "text": "import org.apache.spark.streaming._\nimport sys.process.stringSeqToProcess\nimport org.apache.spark.streaming.kafka._\nimport org.apache.spark.storage.StorageLevel\nimport net.elodina.collectd.Metric\nimport org.apache.avro.generic.{GenericData, GenericRecord}\nimport org.apache.avro.io._\nimport org.apache.avro.specific.SpecificDatumReader\nimport net.elodina.collectd.ByteKafkaDecoder\nimport net.elodina.collectd.StringKafkaDecoder\nimport scala.collection.JavaConverters._\nimport java.util.UUID\n\n//case class CollectdMetric(hostname: String, plugin: String, pluginInstance: String, `type`: String, typeInstance: String, value: java.lang.Double, time: Long){}\n\ncase class CPUMetric(hostname: String, typeInstance: String, value: java.lang.Double, time: Long){}\n\nval kfkssc \u003d new StreamingContext(sc, Seconds(2))\n\nval topics \u003d \"test-collectd\"\n\nval partitions \u003d 1\n\nval zkQuorum \u003d \"exhibitor-0.service.mesosinfra:2181,exhibitor-1.service.mesosinfra:2181,exhibitor-2.service.mesosinfra:2181\"\n\nval topicMap \u003d topics.split(\",\").map((_, partitions)).toMap\n\nval kafkaConf \u003d Map(\n    \"zookeeper.connect\" -\u003e zkQuorum, // Default zookeeper location\n    \"group.id\" -\u003e s\"elodina-metrics-${UUID.randomUUID().toString}\",\n    //\"zookeeper.connection.timeout.ms\" -\u003e \"1000\"\n    \"auto.commit.enable\" -\u003e \"true\",\n    \"auto.commit.interval.ms\" -\u003e \"5000\"\n)\n\nval lines \u003d KafkaUtils.createStream[String, Array[Byte], StringKafkaDecoder, ByteKafkaDecoder](kfkssc, kafkaConf, Map(\"test-collectd\" -\u003e 1), StorageLevel.MEMORY_AND_DISK_SER)\n\nval kfk \u003d lines.window(Seconds(60))\n\nval reader \u003d new SpecificDatumReader[Metric](Metric.getClassSchema())\nval decoderFactory: DecoderFactory \u003d DecoderFactory.get()\n\nkfk.filter {msg \u003d\u003e\n  msg._1 \u003d\u003d \"cpu\" \n}.map { msg \u003d\u003e\n  val raw \u003d msg._2\n  val decoder \u003d DecoderFactory.get().binaryDecoder(raw, null)\n  val record: GenericRecord \u003d new SpecificDatumReader[GenericRecord](Metric.getClassSchema()).read(null, decoder)\n   CPUMetric(\n      record.get(\"hostname\").asInstanceOf[String], \n      //record.get(\"plugin\").asInstanceOf[String],\n      //record.get(\"pluginInstance\").asInstanceOf[String],\n      //record.get(\"type\").asInstanceOf[String],\n      record.get(\"typeInstance\").asInstanceOf[String],\n      record.get(\"values\").asInstanceOf[GenericData.Array[java.lang.Double]].asScala.headOption.getOrElse(new java.lang.Double(0.0)),\n      record.get(\"time\").asInstanceOf[Long]\n      )\n}.foreachRDD(rdd \u003d\u003e\n  rdd.toDF().registerTempTable(\"collectdCPU\")\n)\n\nkfkssc.remember(Minutes(5))\n\nkfkssc.start()",
+      "dateUpdated": "Dec 7, 2015 1:13:25 PM",
+      "config": {
+        "colWidth": 12.0,
+        "graph": {
+          "mode": "table",
+          "height": 300.0,
+          "optionOpen": false,
+          "keys": [],
+          "values": [],
+          "groups": [],
+          "scatter": {}
+        },
+        "editorMode": "ace/mode/scala"
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "jobName": "paragraph_1449136268683_-1861099679",
+      "id": "20151203-095108_769116502",
+      "result": {
+        "code": "SUCCESS",
+        "type": "TEXT",
+        "msg": "import org.apache.spark.streaming._\nimport sys.process.stringSeqToProcess\nimport org.apache.spark.streaming.kafka._\nimport org.apache.spark.storage.StorageLevel\nimport net.elodina.collectd.Metric\nimport org.apache.avro.generic.{GenericData, GenericRecord}\nimport org.apache.avro.io._\nimport org.apache.avro.specific.SpecificDatumReader\nimport net.elodina.collectd.ByteKafkaDecoder\nimport net.elodina.collectd.StringKafkaDecoder\nimport scala.collection.JavaConverters._\nimport java.util.UUID\ndefined class CPUMetric\nkfkssc: org.apache.spark.streaming.StreamingContext \u003d org.apache.spark.streaming.StreamingContext@3c43450a\ntopics: String \u003d collectd\npartitions: Int \u003d 1\nzkQuorum: String \u003d exhibitor-0.service.mesosinfra:2181,exhibitor-1.service.mesosinfra:2181,exhibitor-2.service.mesosinfra:2181\ntopicMap: scala.collection.immutable.Map[String,Int] \u003d Map(test-collectd -\u003e 1)\nkafkaConf: scala.collection.immutable.Map[String,String] \u003d Map(zookeeper.connect -\u003e exhibitor-0.service.mesosinfra:2181,exhibitor-1.service.mesosinfra:2181,exhibitor-2.service.mesosinfra:2181, group.id -\u003e elodina-metrics-d4fd2306-fa22-46fb-a356-666e4faa3ccc, auto.commit.enable -\u003e true, auto.commit.interval.ms -\u003e 5000)\nlines: org.apache.spark.streaming.dstream.ReceiverInputDStream[(String, Array[Byte])] \u003d org.apache.spark.streaming.kafka.KafkaInputDStream@2540561f\nkfk: org.apache.spark.streaming.dstream.DStream[(String, Array[Byte])] \u003d org.apache.spark.streaming.dstream.WindowedDStream@6a47d90a\nreader: org.apache.avro.specific.SpecificDatumReader[net.elodina.collectd.Metric] \u003d org.apache.avro.specific.SpecificDatumReader@637cef12\ndecoderFactory: org.apache.avro.io.DecoderFactory \u003d org.apache.avro.io.DecoderFactory$DefaultDecoderFactory@5ff935de\n"
+      },
+      "dateCreated": "Dec 3, 2015 9:51:08 AM",
+      "dateStarted": "Dec 7, 2015 1:13:25 PM",
+      "dateFinished": "Dec 7, 2015 1:15:05 PM",
+      "status": "FINISHED",
+      "progressUpdateIntervalMs": 500
+    },
+    {
+      "text": "kfkssc.stop(false,false)",
+      "dateUpdated": "Dec 7, 2015 3:29:46 PM",
+      "config": {
+        "colWidth": 12.0,
+        "graph": {
+          "mode": "table",
+          "height": 300.0,
+          "optionOpen": false,
+          "keys": [],
+          "values": [],
+          "groups": [],
+          "scatter": {}
+        },
+        "editorMode": "ace/mode/scala"
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "jobName": "paragraph_1449145236370_320236043",
+      "id": "20151203-122036_2029635314",
+      "result": {
+        "code": "SUCCESS",
+        "type": "TEXT",
+        "msg": ""
+      },
+      "dateCreated": "Dec 3, 2015 12:20:36 PM",
+      "dateStarted": "Dec 7, 2015 3:29:46 PM",
+      "dateFinished": "Dec 7, 2015 3:29:47 PM",
+      "status": "FINISHED",
+      "progressUpdateIntervalMs": 500
+    },
+    {
+      "text": "%dep\nz.load(\"../notebook-deps/collectd-api.jar\")\nz.load(\"org.apache.spark:spark-streaming-kafka_2.10:1.5.1\")\n//z.load(\"org.apache.kafka:kafka_2.10:0.8.2.1\")",
+      "dateUpdated": "Dec 7, 2015 12:46:36 PM",
+      "config": {
+        "colWidth": 12.0,
+        "graph": {
+          "mode": "table",
+          "height": 300.0,
+          "optionOpen": false,
+          "keys": [],
+          "values": [],
+          "groups": [],
+          "scatter": {}
+        },
+        "editorMode": "ace/mode/scala"
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "jobName": "paragraph_1449139969405_-1122298068",
+      "id": "20151203-105249_1290515452",
+      "result": {
+        "code": "SUCCESS",
+        "type": "TEXT",
+        "msg": "res0: org.apache.zeppelin.spark.dep.Dependency \u003d org.apache.zeppelin.spark.dep.Dependency@1974cc7\n"
+      },
+      "dateCreated": "Dec 3, 2015 10:52:49 AM",
+      "dateStarted": "Dec 7, 2015 12:46:36 PM",
+      "dateFinished": "Dec 7, 2015 12:46:42 PM",
+      "status": "FINISHED",
+      "progressUpdateIntervalMs": 500
+    },
+    {
+      "config": {},
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "jobName": "paragraph_1449242333952_-431936905",
+      "id": "20151204-151853_1099413618",
+      "dateCreated": "Dec 4, 2015 3:18:53 PM",
+      "status": "READY",
+      "progressUpdateIntervalMs": 500
+    }
+  ],
+  "name": "Elodina",
+  "id": "2B6NWXQH7",
+  "angularObjects": {
+    "2B5JNYQG9": [],
+    "2B77KRQ7B": [],
+    "2B5UBR2T1": [],
+    "2B61KFHHB": [],
+    "2B71TKRAX": [],
+    "2B6N7TAWJ": [],
+    "2B5T4Y134": [],
+    "2B64GJ4E8": [],
+    "2B85P8F63": [],
+    "2B59ACF1Z": [],
+    "2B64D415T": [],
+    "2B86K7D7B": [],
+    "2B8736GXY": []
+  },
+  "config": {},
+  "info": {}
+}
