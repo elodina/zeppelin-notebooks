@@ -1,0 +1,267 @@
+{
+  "paragraphs": [
+    {
+      "text": "%dep\nz.load(\"org.apache.spark:spark-streaming-kafka_2.10:1.5.1\")",
+      "dateUpdated": "Dec 21, 2015 11:05:47 AM",
+      "config": {
+        "colWidth": 12.0,
+        "graph": {
+          "mode": "table",
+          "height": 300.0,
+          "optionOpen": false,
+          "keys": [],
+          "values": [],
+          "groups": [],
+          "scatter": {}
+        },
+        "editorMode": "ace/mode/scala"
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "jobName": "paragraph_1450695940487_864335284",
+      "id": "20151221-110540_1803961199",
+      "result": {
+        "code": "ERROR",
+        "type": "TEXT",
+        "msg": "Must be used before SparkInterpreter (%spark) initialized"
+      },
+      "dateCreated": "Dec 21, 2015 11:05:40 AM",
+      "dateStarted": "Dec 21, 2015 11:05:47 AM",
+      "dateFinished": "Dec 21, 2015 11:05:47 AM",
+      "status": "ERROR",
+      "progressUpdateIntervalMs": 500
+    },
+    {
+      "text": "import java.util.{Locale, Date, Calendar}\n\nimport _root_.kafka.serializer.StringDecoder\nimport scala.util.Try\nimport scala.util.matching.Regex\nimport java.text.ParseException\nimport java.text.SimpleDateFormat\nimport java.text.DateFormat\nimport org.apache.spark.streaming._\nimport sys.process.stringSeqToProcess\nimport org.apache.spark.streaming.kafka._\nimport org.apache.spark.storage.StorageLevel\nimport scala.collection.JavaConverters._\nimport java.util.UUID\n\n\ncase class YcsbStat(timestamp: Int, host: String, operation: String, measurement: String, value: Double \u003d 0)\n\nclass YcsbStatParser {\n\n  val msgRe \u003d \"^\\\\[(OVERALL|CLEANUP|READ|READ-MODIFY-WRITE|UPDATE)\\\\], ([^,]+), (.*)$\".r\n\n  def parseMsg(msg: String): Option[(String, String, Double)] \u003d {\n    msg match {\n      case msgRe(op, k, v) \u003d\u003e\n        Some((op, k, java.lang.Double.parseDouble(v)))\n      case _ \u003d\u003e\n        None\n    }\n  }\n\n  def apply(text: String): Option[YcsbStat] \u003d try {\n    if (text \u003d\u003d null || text.isEmpty) return None\n    val line \u003d text.stripLineEnd.trim\n    for {\n      (header, msg) \u003c- parseHeader(line)\n      (operation, measurement, value) \u003c- parseMsg(msg.trim)\n    } yield YcsbStat(header.ts, header.host, operation, measurement, value)\n  } catch {\n    case e: Throwable \u003d\u003e\n      e.printStackTrace()\n      None\n  }\n\n  case class Header(ts: Int, host: String, tag: String)\n\n  val logLine \u003d \"^\u003c(\\\\d+)\u003e(\\\\w+ \\\\d{2} \\\\d{2}:\\\\d{2}:\\\\d{2}) ([^ ]+) ([^:]+): (.*)$\".r // \"\u003c(?pri)\u003e(?month) ?day ?hours:?minutes:?seconds ?host ?tag: ?rest\"\n\n  def parseHeader(text: String): Option[(Header, String)] \u003d {\n\n    if (!text.startsWith(\"\u003c\")) {\n      None\n    } else {\n\n      text match {\n        case logLine(priority, date, host, tag, rest) \u003d\u003e\n          for { ts \u003c- parseDate(date) } yield (Header(ts, host, tag), rest)\n        case _ \u003d\u003e\n          println(\"WARN: unable to parse \" + text)\n          None\n      }\n    }\n  }\n\n  def parseDate(date: String): Option[Int] \u003d try {\n    val d1 \u003d date + \" \" + Calendar.getInstance().get(Calendar.YEAR).toString\n    val parse: Date \u003d dateFormat.parse(d1)\n    Some((parse.getTime / 1000.0).toInt)\n  } catch {\n    case e: Throwable \u003d\u003e\n      e.printStackTrace()\n      None\n  }\n\n  val dateFormat: DateFormat \u003d new SimpleDateFormat(\"MMM dd kk:mm:ss yyyy\", Locale.ENGLISH)\n}\n\n\n\n  val ssc1 \u003d new StreamingContext(sc, Seconds(2))\n\n  val partitions \u003d 1\n\n  val zkQuorum \u003d \"exhibitor-0.service.mesosinfra:2181,exhibitor-1.service.mesosinfra:2181,exhibitor-2.service.mesosinfra:2181\"\n\n  val kafkaConf \u003d Map(\n    \"zookeeper.connect\" -\u003e zkQuorum, // Default zookeeper location\n    \"group.id\" -\u003e s\"ycsb-metrics-${UUID.randomUUID().toString}\",\n    //\"zookeeper.connection.timeout.ms\" -\u003e \"1000\"\n    \"auto.commit.enable\" -\u003e \"true\",\n    \"auto.commit.interval.ms\" -\u003e \"5000\"\n  )\n\n  val lines \u003d KafkaUtils.createStream[String, String, StringDecoder, StringDecoder](ssc1, kafkaConf, Map(\"syslogs\" -\u003e 1), StorageLevel.MEMORY_AND_DISK_SER)\n    .map(_._2)\n\n  val l1 \u003d lines.window(Minutes(15), Minutes(1))\n  val l2 \u003d l1.flatMap(x \u003d\u003e (new YcsbStatParser).apply(x))\n  val l3 \u003d l2.foreachRDD(rdd \u003d\u003e rdd.toDF().registerTempTable(\"ycsbMetrics\"))\n\n  ssc1.remember(Minutes(16))\n\n  ssc1.start()\n\n  ssc1.awaitTerminationOrTimeout(6 * 60 * 1000L)\n\n",
+      "dateUpdated": "Dec 21, 2015 4:08:16 PM",
+      "config": {
+        "colWidth": 12.0,
+        "graph": {
+          "mode": "table",
+          "height": 300.0,
+          "optionOpen": false,
+          "keys": [],
+          "values": [],
+          "groups": [],
+          "scatter": {}
+        },
+        "editorMode": "ace/mode/scala"
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "jobName": "paragraph_1450695947073_949380116",
+      "id": "20151221-110547_779281705",
+      "result": {
+        "code": "SUCCESS",
+        "type": "TEXT",
+        "msg": "import java.util.{Locale, Date, Calendar}\nimport _root_.kafka.serializer.StringDecoder\nimport scala.util.Try\nimport scala.util.matching.Regex\nimport java.text.ParseException\nimport java.text.SimpleDateFormat\nimport java.text.DateFormat\nimport org.apache.spark.streaming._\nimport sys.process.stringSeqToProcess\nimport org.apache.spark.streaming.kafka._\nimport org.apache.spark.storage.StorageLevel\nimport scala.collection.JavaConverters._\nimport java.util.UUID\ndefined class YcsbStat\ndefined class YcsbStatParser\nwarning: previously defined object YcsbStatParser is not a companion to class YcsbStatParser.\nCompanions must be defined together; you may wish to use :paste mode for this.\nssc1: org.apache.spark.streaming.StreamingContext \u003d org.apache.spark.streaming.StreamingContext@4fb1bf07\npartitions: Int \u003d 1\nzkQuorum: String \u003d exhibitor-0.service.mesosinfra:2181,exhibitor-1.service.mesosinfra:2181,exhibitor-2.service.mesosinfra:2181\nkafkaConf: scala.collection.immutable.Map[String,String] \u003d Map(zookeeper.connect -\u003e exhibitor-0.service.mesosinfra:2181,exhibitor-1.service.mesosinfra:2181,exhibitor-2.service.mesosinfra:2181, group.id -\u003e ycsb-metrics-a1a9b4af-4ae9-4ef9-8dad-cd2293611ca7, auto.commit.enable -\u003e true, auto.commit.interval.ms -\u003e 5000)\nlines: org.apache.spark.streaming.dstream.DStream[String] \u003d org.apache.spark.streaming.dstream.MappedDStream@5f6bb2ec\nl1: org.apache.spark.streaming.dstream.DStream[String] \u003d org.apache.spark.streaming.dstream.WindowedDStream@3e6e4792\nl2: org.apache.spark.streaming.dstream.DStream[YcsbStat] \u003d org.apache.spark.streaming.dstream.FlatMappedDStream@4020aa3c\nl3: Unit \u003d ()\nres287: Boolean \u003d false\n"
+      },
+      "dateCreated": "Dec 21, 2015 11:05:47 AM",
+      "dateStarted": "Dec 21, 2015 4:08:16 PM",
+      "dateFinished": "Dec 21, 2015 4:16:01 PM",
+      "status": "FINISHED",
+      "progressUpdateIntervalMs": 500
+    },
+    {
+      "text": "%spark\nssc1.stop(false, false)",
+      "dateUpdated": "Dec 22, 2015 8:50:46 AM",
+      "config": {
+        "colWidth": 12.0,
+        "graph": {
+          "mode": "table",
+          "height": 300.0,
+          "optionOpen": false,
+          "keys": [],
+          "values": [],
+          "groups": [],
+          "scatter": {}
+        },
+        "editorMode": "ace/mode/scala"
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "jobName": "paragraph_1450697751796_673472994",
+      "id": "20151221-113551_2032635443",
+      "result": {
+        "code": "SUCCESS",
+        "type": "TEXT",
+        "msg": ""
+      },
+      "dateCreated": "Dec 21, 2015 11:35:51 AM",
+      "dateStarted": "Dec 22, 2015 8:50:46 AM",
+      "dateFinished": "Dec 22, 2015 8:50:57 AM",
+      "status": "FINISHED",
+      "progressUpdateIntervalMs": 500
+    },
+    {
+      "text": "%sql\nselect count(*) from ycsbMetrics",
+      "dateUpdated": "Dec 21, 2015 12:54:37 PM",
+      "config": {
+        "colWidth": 12.0,
+        "graph": {
+          "mode": "table",
+          "height": 300.0,
+          "optionOpen": false,
+          "keys": [],
+          "values": [],
+          "groups": [],
+          "scatter": {}
+        },
+        "editorMode": "ace/mode/sql"
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "jobName": "paragraph_1450700619952_527374561",
+      "id": "20151221-122339_1871112806",
+      "result": {
+        "code": "SUCCESS",
+        "type": "TABLE",
+        "msg": "_c0\n84\n"
+      },
+      "dateCreated": "Dec 21, 2015 12:23:39 PM",
+      "dateStarted": "Dec 21, 2015 12:54:37 PM",
+      "dateFinished": "Dec 21, 2015 12:57:42 PM",
+      "status": "FINISHED",
+      "progressUpdateIntervalMs": 500
+    },
+    {
+      "text": "%sql\nselect timestamp, value from ycsbMetrics where operation \u003d \"${operation\u003dOVERALL}\" and measurement \u003d \"${measurement\u003dThroughput(ops/sec)}\"",
+      "dateUpdated": "Dec 21, 2015 4:45:33 PM",
+      "config": {
+        "colWidth": 12.0,
+        "graph": {
+          "mode": "lineChart",
+          "height": 300.0,
+          "optionOpen": true,
+          "keys": [
+            {
+              "name": "timestamp",
+              "index": 0.0,
+              "aggr": "sum"
+            }
+          ],
+          "values": [
+            {
+              "name": "value",
+              "index": 1.0,
+              "aggr": "sum"
+            }
+          ],
+          "groups": [],
+          "scatter": {
+            "xAxis": {
+              "name": "timestamp",
+              "index": 0.0,
+              "aggr": "sum"
+            }
+          },
+          "lineWithFocus": false
+        },
+        "editorMode": "ace/mode/sql"
+      },
+      "settings": {
+        "params": {
+          "host": "ip-172-29-47-108",
+          "measurement": "Throughput(ops/sec)",
+          "operation": "OVERALL"
+        },
+        "forms": {
+          "operation": {
+            "name": "operation",
+            "defaultValue": "OVERALL",
+            "hidden": false
+          },
+          "measurement": {
+            "name": "measurement",
+            "defaultValue": "Throughput(ops/sec)",
+            "hidden": false
+          }
+        }
+      },
+      "jobName": "paragraph_1450702118314_1288706146",
+      "id": "20151221-124838_1429177675",
+      "result": {
+        "code": "SUCCESS",
+        "type": "TABLE",
+        "msg": "timestamp\tvalue\n1450714283\t1030.3967027305512\n1450714361\t1128.5407967498024\n1450714437\t1041.124414367517\n1450714513\t996.8102073365231\n1450714586\t1111.9759813188034\n1450714660\t1011.8385105737125\n1450714740\t1003.6130068245684\n1450714817\t1048.8777008600798\n1450714890\t1085.5405992184108\n1450715040\t1081.782778018174\n1450715112\t1084.7163466753443\n"
+      },
+      "dateCreated": "Dec 21, 2015 12:48:38 PM",
+      "dateStarted": "Dec 21, 2015 4:26:00 PM",
+      "dateFinished": "Dec 21, 2015 4:44:47 PM",
+      "status": "FINISHED",
+      "progressUpdateIntervalMs": 500
+    },
+    {
+      "text": "%sql\nselect * from ycsbMetrics",
+      "dateUpdated": "Dec 21, 2015 2:12:52 PM",
+      "config": {
+        "colWidth": 12.0,
+        "graph": {
+          "mode": "table",
+          "height": 300.0,
+          "optionOpen": false,
+          "keys": [],
+          "values": [],
+          "groups": [],
+          "scatter": {}
+        },
+        "editorMode": "ace/mode/sql"
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "jobName": "paragraph_1450703000395_-2105672365",
+      "id": "20151221-130320_550546766",
+      "result": {
+        "code": "SUCCESS",
+        "type": "TABLE",
+        "msg": "timestamp\thost\toperation\tmeasurement\tvalue\n1450706074\tip-172-29-47-108\tOVERALL\tRunTime(ms)\t9168.0\n1450706074\tip-172-29-47-108\tOVERALL\tThroughput(ops/sec)\t1090.7504363001744\n1450706074\tip-172-29-47-108\tREAD\tOperations\t6673.0\n1450706074\tip-172-29-47-108\tREAD\tAverageLatency(us)\t4815.435186572756\n1450706074\tip-172-29-47-108\tREAD\tMinLatency(us)\t801.0\n1450706074\tip-172-29-47-108\tREAD\tMaxLatency(us)\t129279.0\n1450706074\tip-172-29-47-108\tREAD\t95thPercentileLatency(us)\t10983.0\n1450706074\tip-172-29-47-108\tREAD\t99thPercentileLatency(us)\t19647.0\n1450706074\tip-172-29-47-108\tREAD\tReturn\u003dOK\t6673.0\n1450706074\tip-172-29-47-108\tREAD-MODIFY-WRITE\tOperations\t3350.0\n1450706074\tip-172-29-47-108\tREAD-MODIFY-WRITE\tAverageLatency(us)\t9342.468358208955\n1450706074\tip-172-29-47-108\tREAD-MODIFY-WRITE\tMinLatency(us)\t1540.0\n1450706074\tip-172-29-47-108\tREAD-MODIFY-WRITE\tMaxLatency(us)\t203647.0\n1450706074\tip-172-29-47-108\tREAD-MODIFY-WRITE\t95thPercentileLatency(us)\t19727.0\n1450706074\tip-172-29-47-108\tREAD-MODIFY-WRITE\t99thPercentileLatency(us)\t32863.0\n1450706074\tip-172-29-47-108\tCLEANUP\tOperations\t8.0\n1450706074\tip-172-29-47-108\tCLEANUP\tAverageLatency(us)\t3779.625\n1450706074\tip-172-29-47-108\tCLEANUP\tMinLatency(us)\t1.0\n1450706074\tip-172-29-47-108\tCLEANUP\tMaxLatency(us)\t30223.0\n1450706074\tip-172-29-47-108\tCLEANUP\t95thPercentileLatency(us)\t30223.0\n1450706074\tip-172-29-47-108\tCLEANUP\t99thPercentileLatency(us)\t30223.0\n1450706074\tip-172-29-47-108\tUPDATE\tOperations\t6677.0\n1450706074\tip-172-29-47-108\tUPDATE\tAverageLatency(us)\t4493.258199790325\n1450706074\tip-172-29-47-108\tUPDATE\tMinLatency(us)\t500.0\n1450706074\tip-172-29-47-108\tUPDATE\tMaxLatency(us)\t190975.0\n1450706074\tip-172-29-47-108\tUPDATE\t95thPercentileLatency(us)\t10599.0\n1450706074\tip-172-29-47-108\tUPDATE\t99thPercentileLatency(us)\t19807.0\n1450706074\tip-172-29-47-108\tUPDATE\tReturn\u003dOK\t6677.0\n1450706148\tip-172-29-169-91\tOVERALL\tRunTime(ms)\t9499.0\n1450706148\tip-172-29-169-91\tOVERALL\tThroughput(ops/sec)\t1052.7423939362038\n1450706148\tip-172-29-169-91\tREAD\tOperations\t6771.0\n1450706148\tip-172-29-169-91\tREAD\tAverageLatency(us)\t5020.254172204992\n1450706148\tip-172-29-169-91\tREAD\tMinLatency(us)\t1002.0\n1450706148\tip-172-29-169-91\tREAD\tMaxLatency(us)\t164863.0\n1450706148\tip-172-29-169-91\tREAD\t95thPercentileLatency(us)\t12031.0\n1450706148\tip-172-29-169-91\tREAD\t99thPercentileLatency(us)\t19967.0\n1450706148\tip-172-29-169-91\tREAD\tReturn\u003dOK\t6771.0\n1450706148\tip-172-29-169-91\tREAD-MODIFY-WRITE\tOperations\t3370.0\n1450706148\tip-172-29-169-91\tREAD-MODIFY-WRITE\tAverageLatency(us)\t9878.43115727003\n1450706148\tip-172-29-169-91\tREAD-MODIFY-WRITE\tMinLatency(us)\t1719.0\n1450706148\tip-172-29-169-91\tREAD-MODIFY-WRITE\tMaxLatency(us)\t176767.0\n1450706148\tip-172-29-169-91\tREAD-MODIFY-WRITE\t95thPercentileLatency(us)\t22031.0\n1450706148\tip-172-29-169-91\tREAD-MODIFY-WRITE\t99thPercentileLatency(us)\t34911.0\n1450706148\tip-172-29-169-91\tCLEANUP\tOperations\t8.0\n1450706148\tip-172-29-169-91\tCLEANUP\tAverageLatency(us)\t2683.125\n1450706148\tip-172-29-169-91\tCLEANUP\tMinLatency(us)\t1.0\n1450706148\tip-172-29-169-91\tCLEANUP\tMaxLatency(us)\t21455.0\n1450706148\tip-172-29-169-91\tCLEANUP\t95thPercentileLatency(us)\t21455.0\n1450706148\tip-172-29-169-91\tCLEANUP\t99thPercentileLatency(us)\t21455.0\n1450706148\tip-172-29-169-91\tUPDATE\tOperations\t6599.0\n1450706148\tip-172-29-169-91\tUPDATE\tAverageLatency(us)\t4774.8436126685865\n1450706148\tip-172-29-169-91\tUPDATE\tMinLatency(us)\t548.0\n1450706148\tip-172-29-169-91\tUPDATE\tMaxLatency(us)\t164991.0\n1450706148\tip-172-29-169-91\tUPDATE\t95thPercentileLatency(us)\t12159.0\n1450706148\tip-172-29-169-91\tUPDATE\t99thPercentileLatency(us)\t19983.0\n1450706148\tip-172-29-169-91\tUPDATE\tReturn\u003dOK\t6599.0\n"
+      },
+      "dateCreated": "Dec 21, 2015 1:03:20 PM",
+      "dateStarted": "Dec 21, 2015 1:53:03 PM",
+      "dateFinished": "Dec 21, 2015 2:00:28 PM",
+      "status": "FINISHED",
+      "progressUpdateIntervalMs": 500
+    },
+    {
+      "config": {},
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "jobName": "paragraph_1450705855929_1104562423",
+      "id": "20151221-135055_715576399",
+      "dateCreated": "Dec 21, 2015 1:50:55 PM",
+      "status": "READY",
+      "progressUpdateIntervalMs": 500
+    }
+  ],
+  "name": "YCSB",
+  "id": "2B8J82EFH",
+  "angularObjects": {
+    "2B5JNYQG9": [],
+    "2B77KRQ7B": [],
+    "2B5UBR2T1": [],
+    "2B61KFHHB": [],
+    "2B71TKRAX": [],
+    "2B6N7TAWJ": [],
+    "2B5T4Y134": [],
+    "2B64GJ4E8": [],
+    "2B85P8F63": [],
+    "2B59ACF1Z": [],
+    "2B64D415T": [],
+    "2B86K7D7B": [],
+    "2B8736GXY": []
+  },
+  "config": {},
+  "info": {}
+}
