@@ -1,0 +1,100 @@
+{
+  "paragraphs": [
+    {
+      "text": "%sql\nSELECT * from aggrcpu",
+      "dateUpdated": "Dec 22, 2015 10:17:00 PM",
+      "config": {
+        "colWidth": 12.0,
+        "graph": {
+          "mode": "multiBarChart",
+          "height": 300.0,
+          "optionOpen": false,
+          "keys": [
+            {
+              "name": "hostname",
+              "index": 0.0,
+              "aggr": "sum"
+            }
+          ],
+          "values": [
+            {
+              "name": "value",
+              "index": 1.0,
+              "aggr": "sum"
+            }
+          ],
+          "groups": [],
+          "scatter": {
+            "xAxis": {
+              "name": "hostname",
+              "index": 0.0,
+              "aggr": "sum"
+            },
+            "yAxis": {
+              "name": "value",
+              "index": 1.0,
+              "aggr": "sum"
+            }
+          }
+        },
+        "editorMode": "ace/mode/scala"
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "jobName": "paragraph_1450822498378_649561316",
+      "id": "20151222-221458_2052280376",
+      "result": {
+        "code": "SUCCESS",
+        "type": "TABLE",
+        "msg": "hostname\tvalue\nip-172-29-27-92.node.mesosinfra\t76.05696302393906\nip-172-29-109-71.node.mesosinfra\t76.53836608584605\nip-172-29-169-91.node.mesosinfra\t75.74724661475166\nip-172-29-132-183.node.mesosinfra\t77.29476453979106\nip-172-29-203-242.node.mesosinfra\t76.75140852355572\nip-172-29-47-108.node.mesosinfra\t77.52269789096447\nip-172-29-32-216.node.mesosinfra\t75.72871964630346\n"
+      },
+      "dateCreated": "Dec 22, 2015 10:14:58 PM",
+      "dateStarted": "Dec 23, 2015 11:53:00 AM",
+      "dateFinished": "Dec 23, 2015 11:53:00 AM",
+      "status": "FINISHED",
+      "progressUpdateIntervalMs": 500
+    },
+    {
+      "config": {},
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "jobName": "paragraph_1450822567788_-1633230529",
+      "id": "20151222-221607_1255760179",
+      "result": {
+        "code": "SUCCESS",
+        "type": "TEXT"
+      },
+      "dateCreated": "Dec 22, 2015 10:16:07 PM",
+      "dateStarted": "Dec 23, 2015 11:53:00 AM",
+      "dateFinished": "Dec 23, 2015 11:53:00 AM",
+      "status": "FINISHED",
+      "progressUpdateIntervalMs": 500
+    }
+  ],
+  "name": "Elodina dashboard",
+  "id": "2B9CPAQ4A",
+  "angularObjects": {
+    "2B5JNYQG9": [],
+    "2B77KRQ7B": [],
+    "2B5UBR2T1": [],
+    "2B61KFHHB": [],
+    "2B71TKRAX": [],
+    "2B6N7TAWJ": [],
+    "2B5T4Y134": [],
+    "2B64GJ4E8": [],
+    "2B85P8F63": [],
+    "2B59ACF1Z": [],
+    "2B64D415T": [],
+    "2B86K7D7B": [],
+    "2B8736GXY": []
+  },
+  "config": {
+    "looknfeel": "default",
+    "cron": "0/15 * * * * ?"
+  },
+  "info": {}
+}
