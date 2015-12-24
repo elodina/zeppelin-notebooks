@@ -127,7 +127,7 @@
         "cassandra.pooling.new.connection.threshold.local": "100",
         "cassandra.credentials.password": "none",
         "cassandra.native.port": "9042",
-        "cassandra.hosts": "localhost",
+        "cassandra.hosts": "cassandra-node-0.service",
         "cassandra.pooling.core.connection.per.host.local": "2",
         "cassandra.retry.policy": "DEFAULT",
         "cassandra.pooling.pool.timeout.millisecs": "5000",

@@ -1,0 +1,49 @@
+{
+  "paragraphs": [
+    {
+      "text": "%dep\nz.load(\"../notebook-deps/collectd-api.jar\")\nz.load(\"org.apache.spark:spark-streaming-kafka_2.10:1.5.1\")\nz.load(\"../notebook-deps/spark-cassandra-connector-assembly-1.4.1-SNAPSHOT.jar\")",
+      "dateUpdated": "Dec 23, 2015 3:21:23 PM",
+      "config": {
+        "colWidth": 12.0,
+        "graph": {
+          "mode": "table",
+          "height": 300.0,
+          "optionOpen": false,
+          "keys": [],
+          "values": [],
+          "groups": [],
+          "scatter": {}
+        },
+        "editorMode": "ace/mode/scala"
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "jobName": "paragraph_1450884061606_-1879741316",
+      "id": "20151223-152101_108227349",
+      "dateCreated": "Dec 23, 2015 3:21:01 PM",
+      "status": "READY",
+      "progressUpdateIntervalMs": 500
+    }
+  ],
+  "name": "Elodina dep",
+  "id": "2B6S61NHD",
+  "angularObjects": {
+    "2B5JNYQG9": [],
+    "2B77KRQ7B": [],
+    "2B5UBR2T1": [],
+    "2B61KFHHB": [],
+    "2B71TKRAX": [],
+    "2B6N7TAWJ": [],
+    "2B5T4Y134": [],
+    "2B64GJ4E8": [],
+    "2B85P8F63": [],
+    "2B59ACF1Z": [],
+    "2B64D415T": [],
+    "2B86K7D7B": [],
+    "2B8736GXY": []
+  },
+  "config": {},
+  "info": {}
+}
