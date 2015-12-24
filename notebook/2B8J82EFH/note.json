@@ -101,17 +101,29 @@
     },
     {
       "text": "%sql\nselect count(*) from ycsbMetrics",
-      "dateUpdated": "Dec 21, 2015 12:54:37 PM",
+      "dateUpdated": "Dec 24, 2015 12:07:49 PM",
       "config": {
         "colWidth": 12.0,
         "graph": {
           "mode": "table",
           "height": 300.0,
           "optionOpen": false,
-          "keys": [],
+          "keys": [
+            {
+              "name": "_c0",
+              "index": 0.0,
+              "aggr": "sum"
+            }
+          ],
           "values": [],
           "groups": [],
-          "scatter": {}
+          "scatter": {
+            "xAxis": {
+              "name": "_c0",
+              "index": 0.0,
+              "aggr": "sum"
+            }
+          }
         },
         "editorMode": "ace/mode/sql"
       },
@@ -124,17 +136,17 @@
       "result": {
         "code": "SUCCESS",
         "type": "TABLE",
-        "msg": "_c0\n84\n"
+        "msg": "_c0\n224\n"
       },
       "dateCreated": "Dec 21, 2015 12:23:39 PM",
-      "dateStarted": "Dec 21, 2015 12:54:37 PM",
-      "dateFinished": "Dec 21, 2015 12:57:42 PM",
+      "dateStarted": "Dec 24, 2015 12:07:49 PM",
+      "dateFinished": "Dec 24, 2015 12:07:54 PM",
       "status": "FINISHED",
       "progressUpdateIntervalMs": 500
     },
     {
       "text": "%sql\nselect timestamp, value from ycsbMetrics where operation \u003d \"${operation\u003dOVERALL}\" and measurement \u003d \"${measurement\u003dThroughput(ops/sec)}\"",
-      "dateUpdated": "Dec 21, 2015 4:45:33 PM",
+      "dateUpdated": "Dec 24, 2015 12:21:13 PM",
       "config": {
         "colWidth": 12.0,
         "graph": {
@@ -145,14 +157,16 @@
             {
               "name": "timestamp",
               "index": 0.0,
-              "aggr": "sum"
+              "aggr": "sum",
+              "$$hashKey": "object:9526"
             }
           ],
           "values": [
             {
               "name": "value",
               "index": 1.0,
-              "aggr": "sum"
+              "aggr": "sum",
+              "$$hashKey": "object:9528"
             }
           ],
           "groups": [],
@@ -191,17 +205,17 @@
       "result": {
         "code": "SUCCESS",
         "type": "TABLE",
-        "msg": "timestamp\tvalue\n1450714283\t1030.3967027305512\n1450714361\t1128.5407967498024\n1450714437\t1041.124414367517\n1450714513\t996.8102073365231\n1450714586\t1111.9759813188034\n1450714660\t1011.8385105737125\n1450714740\t1003.6130068245684\n1450714817\t1048.8777008600798\n1450714890\t1085.5405992184108\n1450715040\t1081.782778018174\n1450715112\t1084.7163466753443\n"
+        "msg": "timestamp\tvalue\n1450958755\t1041.7751849150952\n1450958827\t1084.010840108401\n1450958902\t922.5943352707815\n1450958975\t1073.8831615120275\n1450959124\t967.0244657189827\n1450959273\t934.1429238673517\n1450959433\t824.6742536698005\n1450959506\t1066.0980810234541\n1450959580\t1051.4141520344863\n"
       },
       "dateCreated": "Dec 21, 2015 12:48:38 PM",
-      "dateStarted": "Dec 21, 2015 4:26:00 PM",
-      "dateFinished": "Dec 21, 2015 4:44:47 PM",
+      "dateStarted": "Dec 24, 2015 12:21:13 PM",
+      "dateFinished": "Dec 24, 2015 12:21:19 PM",
       "status": "FINISHED",
       "progressUpdateIntervalMs": 500
     },
     {
       "text": "%sql\nselect * from ycsbMetrics",
-      "dateUpdated": "Dec 21, 2015 2:12:52 PM",
+      "dateUpdated": "Dec 24, 2015 12:02:28 PM",
       "config": {
         "colWidth": 12.0,
         "graph": {
@@ -224,11 +238,99 @@
       "result": {
         "code": "SUCCESS",
         "type": "TABLE",
-        "msg": "timestamp\thost\toperation\tmeasurement\tvalue\n1450706074\tip-172-29-47-108\tOVERALL\tRunTime(ms)\t9168.0\n1450706074\tip-172-29-47-108\tOVERALL\tThroughput(ops/sec)\t1090.7504363001744\n1450706074\tip-172-29-47-108\tREAD\tOperations\t6673.0\n1450706074\tip-172-29-47-108\tREAD\tAverageLatency(us)\t4815.435186572756\n1450706074\tip-172-29-47-108\tREAD\tMinLatency(us)\t801.0\n1450706074\tip-172-29-47-108\tREAD\tMaxLatency(us)\t129279.0\n1450706074\tip-172-29-47-108\tREAD\t95thPercentileLatency(us)\t10983.0\n1450706074\tip-172-29-47-108\tREAD\t99thPercentileLatency(us)\t19647.0\n1450706074\tip-172-29-47-108\tREAD\tReturn\u003dOK\t6673.0\n1450706074\tip-172-29-47-108\tREAD-MODIFY-WRITE\tOperations\t3350.0\n1450706074\tip-172-29-47-108\tREAD-MODIFY-WRITE\tAverageLatency(us)\t9342.468358208955\n1450706074\tip-172-29-47-108\tREAD-MODIFY-WRITE\tMinLatency(us)\t1540.0\n1450706074\tip-172-29-47-108\tREAD-MODIFY-WRITE\tMaxLatency(us)\t203647.0\n1450706074\tip-172-29-47-108\tREAD-MODIFY-WRITE\t95thPercentileLatency(us)\t19727.0\n1450706074\tip-172-29-47-108\tREAD-MODIFY-WRITE\t99thPercentileLatency(us)\t32863.0\n1450706074\tip-172-29-47-108\tCLEANUP\tOperations\t8.0\n1450706074\tip-172-29-47-108\tCLEANUP\tAverageLatency(us)\t3779.625\n1450706074\tip-172-29-47-108\tCLEANUP\tMinLatency(us)\t1.0\n1450706074\tip-172-29-47-108\tCLEANUP\tMaxLatency(us)\t30223.0\n1450706074\tip-172-29-47-108\tCLEANUP\t95thPercentileLatency(us)\t30223.0\n1450706074\tip-172-29-47-108\tCLEANUP\t99thPercentileLatency(us)\t30223.0\n1450706074\tip-172-29-47-108\tUPDATE\tOperations\t6677.0\n1450706074\tip-172-29-47-108\tUPDATE\tAverageLatency(us)\t4493.258199790325\n1450706074\tip-172-29-47-108\tUPDATE\tMinLatency(us)\t500.0\n1450706074\tip-172-29-47-108\tUPDATE\tMaxLatency(us)\t190975.0\n1450706074\tip-172-29-47-108\tUPDATE\t95thPercentileLatency(us)\t10599.0\n1450706074\tip-172-29-47-108\tUPDATE\t99thPercentileLatency(us)\t19807.0\n1450706074\tip-172-29-47-108\tUPDATE\tReturn\u003dOK\t6677.0\n1450706148\tip-172-29-169-91\tOVERALL\tRunTime(ms)\t9499.0\n1450706148\tip-172-29-169-91\tOVERALL\tThroughput(ops/sec)\t1052.7423939362038\n1450706148\tip-172-29-169-91\tREAD\tOperations\t6771.0\n1450706148\tip-172-29-169-91\tREAD\tAverageLatency(us)\t5020.254172204992\n1450706148\tip-172-29-169-91\tREAD\tMinLatency(us)\t1002.0\n1450706148\tip-172-29-169-91\tREAD\tMaxLatency(us)\t164863.0\n1450706148\tip-172-29-169-91\tREAD\t95thPercentileLatency(us)\t12031.0\n1450706148\tip-172-29-169-91\tREAD\t99thPercentileLatency(us)\t19967.0\n1450706148\tip-172-29-169-91\tREAD\tReturn\u003dOK\t6771.0\n1450706148\tip-172-29-169-91\tREAD-MODIFY-WRITE\tOperations\t3370.0\n1450706148\tip-172-29-169-91\tREAD-MODIFY-WRITE\tAverageLatency(us)\t9878.43115727003\n1450706148\tip-172-29-169-91\tREAD-MODIFY-WRITE\tMinLatency(us)\t1719.0\n1450706148\tip-172-29-169-91\tREAD-MODIFY-WRITE\tMaxLatency(us)\t176767.0\n1450706148\tip-172-29-169-91\tREAD-MODIFY-WRITE\t95thPercentileLatency(us)\t22031.0\n1450706148\tip-172-29-169-91\tREAD-MODIFY-WRITE\t99thPercentileLatency(us)\t34911.0\n1450706148\tip-172-29-169-91\tCLEANUP\tOperations\t8.0\n1450706148\tip-172-29-169-91\tCLEANUP\tAverageLatency(us)\t2683.125\n1450706148\tip-172-29-169-91\tCLEANUP\tMinLatency(us)\t1.0\n1450706148\tip-172-29-169-91\tCLEANUP\tMaxLatency(us)\t21455.0\n1450706148\tip-172-29-169-91\tCLEANUP\t95thPercentileLatency(us)\t21455.0\n1450706148\tip-172-29-169-91\tCLEANUP\t99thPercentileLatency(us)\t21455.0\n1450706148\tip-172-29-169-91\tUPDATE\tOperations\t6599.0\n1450706148\tip-172-29-169-91\tUPDATE\tAverageLatency(us)\t4774.8436126685865\n1450706148\tip-172-29-169-91\tUPDATE\tMinLatency(us)\t548.0\n1450706148\tip-172-29-169-91\tUPDATE\tMaxLatency(us)\t164991.0\n1450706148\tip-172-29-169-91\tUPDATE\t95thPercentileLatency(us)\t12159.0\n1450706148\tip-172-29-169-91\tUPDATE\t99thPercentileLatency(us)\t19983.0\n1450706148\tip-172-29-169-91\tUPDATE\tReturn\u003dOK\t6599.0\n"
+        "msg": "timestamp\thost\toperation\tmeasurement\tvalue\n1450957845\tip-172-29-109-71\tOVERALL\tRunTime(ms)\t9303.0\n1450957845\tip-172-29-109-71\tOVERALL\tThroughput(ops/sec)\t1074.9220681500592\n1450957845\tip-172-29-109-71\tREAD\tOperations\t6688.0\n1450957845\tip-172-29-109-71\tREAD\tAverageLatency(us)\t5008.945125598086\n1450957845\tip-172-29-109-71\tREAD\tMinLatency(us)\t767.0\n1450957845\tip-172-29-109-71\tREAD\tMaxLatency(us)\t207999.0\n1450957845\tip-172-29-109-71\tREAD\t95thPercentileLatency(us)\t11071.0\n1450957845\tip-172-29-109-71\tREAD\t99thPercentileLatency(us)\t20047.0\n1450957845\tip-172-29-109-71\tREAD\tReturn\u003dOK\t6688.0\n1450957845\tip-172-29-109-71\tREAD-MODIFY-WRITE\tOperations\t3297.0\n1450957845\tip-172-29-109-71\tREAD-MODIFY-WRITE\tAverageLatency(us)\t9702.214134061267\n1450957845\tip-172-29-109-71\tREAD-MODIFY-WRITE\tMinLatency(us)\t1269.0\n1450957845\tip-172-29-109-71\tREAD-MODIFY-WRITE\tMaxLatency(us)\t220159.0\n1450957845\tip-172-29-109-71\tREAD-MODIFY-WRITE\t95thPercentileLatency(us)\t21119.0\n1450957845\tip-172-29-109-71\tREAD-MODIFY-WRITE\t99thPercentileLatency(us)\t31935.0\n1450957845\tip-172-29-109-71\tCLEANUP\tOperations\t8.0\n1450957845\tip-172-29-109-71\tCLEANUP\tAverageLatency(us)\t3459.0\n1450957845\tip-172-29-109-71\tCLEANUP\tMinLatency(us)\t1.0\n1450957845\tip-172-29-109-71\tCLEANUP\tMaxLatency(us)\t27663.0\n1450957845\tip-172-29-109-71\tCLEANUP\t95thPercentileLatency(us)\t27663.0\n1450957845\tip-172-29-109-71\tCLEANUP\t99thPercentileLatency(us)\t27663.0\n1450957845\tip-172-29-109-71\tUPDATE\tOperations\t6609.0\n1450957845\tip-172-29-109-71\tUPDATE\tAverageLatency(us)\t4788.779240429717\n1450957845\tip-172-29-109-71\tUPDATE\tMinLatency(us)\t449.0\n1450957845\tip-172-29-109-71\tUPDATE\tMaxLatency(us)\t206079.0\n1450957845\tip-172-29-109-71\tUPDATE\t95thPercentileLatency(us)\t11063.0\n1450957845\tip-172-29-109-71\tUPDATE\t99thPercentileLatency(us)\t19375.0\n1450957845\tip-172-29-109-71\tUPDATE\tReturn\u003dOK\t6609.0\n1450957922\tip-172-29-132-183\tOVERALL\tRunTime(ms)\t9794.0\n1450957922\tip-172-29-132-183\tOVERALL\tThroughput(ops/sec)\t1021.0332856851134\n1450957922\tip-172-29-132-183\tREAD\tOperations\t6820.0\n1450957922\tip-172-29-132-183\tREAD\tAverageLatency(us)\t5084.273020527859\n1450957922\tip-172-29-132-183\tREAD\tMinLatency(us)\t660.0\n1450957922\tip-172-29-132-183\tREAD\tMaxLatency(us)\t216063.0\n1450957922\tip-172-29-132-183\tREAD\t95thPercentileLatency(us)\t11919.0\n1450957922\tip-172-29-132-183\tREAD\t99thPercentileLatency(us)\t19951.0\n1450957922\tip-172-29-132-183\tREAD\tReturn\u003dOK\t6820.0\n1450957922\tip-172-29-132-183\tREAD-MODIFY-WRITE\tOperations\t3447.0\n1450957922\tip-172-29-132-183\tREAD-MODIFY-WRITE\tAverageLatency(us)\t9764.370176965478\n1450957922\tip-172-29-132-183\tREAD-MODIFY-WRITE\tMinLatency(us)\t1417.0\n1450957922\tip-172-29-132-183\tREAD-MODIFY-WRITE\tMaxLatency(us)\t238079.0\n1450957922\tip-172-29-132-183\tREAD-MODIFY-WRITE\t95thPercentileLatency(us)\t21519.0\n1450957922\tip-172-29-132-183\tREAD-MODIFY-WRITE\t99thPercentileLatency(us)\t32255.0\n1450957922\tip-172-29-132-183\tCLEANUP\tOperations\t8.0\n1450957922\tip-172-29-132-183\tCLEANUP\tAverageLatency(us)\t6745.5\n1450957922\tip-172-29-132-183\tCLEANUP\tMinLatency(us)\t2.0\n1450957922\tip-172-29-132-183\tCLEANUP\tMaxLatency(us)\t53951.0\n1450957922\tip-172-29-132-183\tCLEANUP\t95thPercentileLatency(us)\t53951.0\n1450957922\tip-172-29-132-183\tCLEANUP\t99thPercentileLatency(us)\t53951.0\n1450957922\tip-172-29-132-183\tUPDATE\tOperations\t6627.0\n1450957922\tip-172-29-132-183\tUPDATE\tAverageLatency(us)\t4789.168552889693\n1450957922\tip-172-29-132-183\tUPDATE\tMinLatency(us)\t425.0\n1450957922\tip-172-29-132-183\tUPDATE\tMaxLatency(us)\t215935.0\n1450957922\tip-172-29-132-183\tUPDATE\t95thPercentileLatency(us)\t11631.0\n1450957922\tip-172-29-132-183\tUPDATE\t99thPercentileLatency(us)\t18687.0\n1450957922\tip-172-29-132-183\tUPDATE\tReturn\u003dOK\t6627.0\n1450958069\tip-172-29-109-71\tOVERALL\tRunTime(ms)\t10007.0\n1450958069\tip-172-29-109-71\tOVERALL\tThroughput(ops/sec)\t999.30048965724\n1450958069\tip-172-29-109-71\tREAD\tOperations\t6609.0\n1450958069\tip-172-29-109-71\tREAD\tAverageLatency(us)\t5406.708427901347\n1450958069\tip-172-29-109-71\tREAD\tMinLatency(us)\t792.0\n1450958069\tip-172-29-109-71\tREAD\tMaxLatency(us)\t203391.0\n1450958069\tip-172-29-109-71\tREAD\t95thPercentileLatency(us)\t11935.0\n1450958069\tip-172-29-109-71\tREAD\t99thPercentileLatency(us)\t20239.0\n1450958069\tip-172-29-109-71\tREAD\tReturn\u003dOK\t6609.0\n1450958069\tip-172-29-109-71\tREAD-MODIFY-WRITE\tOperations\t3309.0\n1450958069\tip-172-29-109-71\tREAD-MODIFY-WRITE\tAverageLatency(us)\t10466.53369598066\n1450958069\tip-172-29-109-71\tREAD-MODIFY-WRITE\tMinLatency(us)\t1453.0\n1450958069\tip-172-29-109-71\tREAD-MODIFY-WRITE\tMaxLatency(us)\t223743.0\n1450958069\tip-172-29-109-71\tREAD-MODIFY-WRITE\t95thPercentileLatency(us)\t23055.0\n1450958069\tip-172-29-109-71\tREAD-MODIFY-WRITE\t99thPercentileLatency(us)\t33951.0\n1450958069\tip-172-29-109-71\tCLEANUP\tOperations\t8.0\n1450958069\tip-172-29-109-71\tCLEANUP\tAverageLatency(us)\t5395.875\n1450958069\tip-172-29-109-71\tCLEANUP\tMinLatency(us)\t1.0\n1450958069\tip-172-29-109-71\tCLEANUP\tMaxLatency(us)\t43167.0\n1450958069\tip-172-29-109-71\tCLEANUP\t95thPercentileLatency(us)\t43167.0\n1450958069\tip-172-29-109-71\tCLEANUP\t99thPercentileLatency(us)\t43167.0\n1450958069\tip-172-29-109-71\tUPDATE\tOperations\t6700.0\n1450958069\tip-172-29-109-71\tUPDATE\tAverageLatency(us)\t5057.597164179105\n1450958069\tip-172-29-109-71\tUPDATE\tMinLatency(us)\t496.0\n1450958069\tip-172-29-109-71\tUPDATE\tMaxLatency(us)\t223231.0\n1450958069\tip-172-29-109-71\tUPDATE\t95thPercentileLatency(us)\t11991.0\n1450958069\tip-172-29-109-71\tUPDATE\t99thPercentileLatency(us)\t19951.0\n1450958069\tip-172-29-109-71\tUPDATE\tReturn\u003dOK\t6700.0\n1450958145\tip-172-29-32-216\tOVERALL\tRunTime(ms)\t9606.0\n1450958145\tip-172-29-32-216\tOVERALL\tThroughput(ops/sec)\t1041.0160316468873\n1450958145\tip-172-29-32-216\tREAD\tOperations\t6674.0\n1450958145\tip-172-29-32-216\tREAD\tAverageLatency(us)\t5099.7115672759965\n1450958145\tip-172-29-32-216\tREAD\tMinLatency(us)\t807.0\n1450958145\tip-172-29-32-216\tREAD\tMaxLatency(us)\t154239.0\n1450958145\tip-172-29-32-216\tREAD\t95thPercentileLatency(us)\t11383.0\n1450958145\tip-172-29-32-216\tREAD\t99thPercentileLatency(us)\t20191.0\n1450958145\tip-172-29-32-216\tREAD\tReturn\u003dOK\t6674.0\n1450958145\tip-172-29-32-216\tREAD-MODIFY-WRITE\tOperations\t3344.0\n1450958145\tip-172-29-32-216\tREAD-MODIFY-WRITE\tAverageLatency(us)\t9772.722488038278\n1450958145\tip-172-29-32-216\tREAD-MODIFY-WRITE\tMinLatency(us)\t1356.0\n1450958145\tip-172-29-32-216\tREAD-MODIFY-WRITE\tMaxLatency(us)\t158079.0\n1450958145\tip-172-29-32-216\tREAD-MODIFY-WRITE\t95thPercentileLatency(us)\t21743.0\n1450958145\tip-172-29-32-216\tREAD-MODIFY-WRITE\t99thPercentileLatency(us)\t34015.0\n1450958145\tip-172-29-32-216\tCLEANUP\tOperations\t8.0\n1450958145\tip-172-29-32-216\tCLEANUP\tAverageLatency(us)\t3313.625\n1450958145\tip-172-29-32-216\tCLEANUP\tMinLatency(us)\t1.0\n1450958145\tip-172-29-32-216\tCLEANUP\tMaxLatency(us)\t26495.0\n1450958145\tip-172-29-32-216\tCLEANUP\t95thPercentileLatency(us)\t26495.0\n1450958145\tip-172-29-32-216\tCLEANUP\t99thPercentileLatency(us)\t26495.0\n1450958145\tip-172-29-32-216\tUPDATE\tOperations\t6670.0\n1450958145\tip-172-29-32-216\tUPDATE\tAverageLatency(us)\t4774.3974512743625\n1450958145\tip-172-29-32-216\tUPDATE\tMinLatency(us)\t498.0\n1450958145\tip-172-29-32-216\tUPDATE\tMaxLatency(us)\t154239.0\n1450958145\tip-172-29-32-216\tUPDATE\t95thPercentileLatency(us)\t11231.0\n1450958145\tip-172-29-32-216\tUPDATE\t99thPercentileLatency(us)\t19887.0\n1450958145\tip-172-29-32-216\tUPDATE\tReturn\u003dOK\t6670.0\n1450958224\tip-172-29-132-183\tOVERALL\tRunTime(ms)\t10285.0\n1450958224\tip-172-29-132-183\tOVERALL\tThroughput(ops/sec)\t972.2897423432182\n1450958224\tip-172-29-132-183\tREAD\tOperations\t6711.0\n1450958224\tip-172-29-132-183\tREAD\tAverageLatency(us)\t5448.658173148562\n1450958224\tip-172-29-132-183\tREAD\tMinLatency(us)\t758.0\n1450958224\tip-172-29-132-183\tREAD\tMaxLatency(us)\t215167.0\n1450958224\tip-172-29-132-183\tREAD\t95thPercentileLatency(us)\t14023.0\n1450958224\tip-172-29-132-183\tREAD\t99thPercentileLatency(us)\t22271.0\n1450958224\tip-172-29-132-183\tREAD\tReturn\u003dOK\t6711.0\n1450958224\tip-172-29-132-183\tREAD-MODIFY-WRITE\tOperations\t3435.0\n1450958224\tip-172-29-132-183\tREAD-MODIFY-WRITE\tAverageLatency(us)\t10711.65211062591\n1450958224\tip-172-29-132-183\tREAD-MODIFY-WRITE\tMinLatency(us)\t1279.0\n1450958224\tip-172-29-132-183\tREAD-MODIFY-WRITE\tMaxLatency(us)\t222079.0\n1450958224\tip-172-29-132-183\tREAD-MODIFY-WRITE\t95thPercentileLatency(us)\t25855.0\n1450958224\tip-172-29-132-183\tREAD-MODIFY-WRITE\t99thPercentileLatency(us)\t42239.0\n1450958224\tip-172-29-132-183\tCLEANUP\tOperations\t8.0\n1450958224\tip-172-29-132-183\tCLEANUP\tAverageLatency(us)\t8382.375\n1450958224\tip-172-29-132-183\tCLEANUP\tMinLatency(us)\t1.0\n1450958224\tip-172-29-132-183\tCLEANUP\tMaxLatency(us)\t67071.0\n1450958224\tip-172-29-132-183\tCLEANUP\t95thPercentileLatency(us)\t67071.0\n1450958224\tip-172-29-132-183\tCLEANUP\t99thPercentileLatency(us)\t67071.0\n1450958224\tip-172-29-132-183\tUPDATE\tOperations\t6724.0\n1450958224\tip-172-29-132-183\tUPDATE\tAverageLatency(us)\t5073.279298036883\n1450958224\tip-172-29-132-183\tUPDATE\tMinLatency(us)\t296.0\n1450958224\tip-172-29-132-183\tUPDATE\tMaxLatency(us)\t215039.0\n1450958224\tip-172-29-132-183\tUPDATE\t95thPercentileLatency(us)\t13743.0\n1450958224\tip-172-29-132-183\tUPDATE\t99thPercentileLatency(us)\t20319.0\n1450958224\tip-172-29-132-183\tUPDATE\tReturn\u003dOK\t6724.0\n1450958303\tip-172-29-32-216\tOVERALL\tRunTime(ms)\t9304.0\n1450958303\tip-172-29-32-216\tOVERALL\tThroughput(ops/sec)\t1074.8065348237317\n1450958303\tip-172-29-32-216\tREAD\tOperations\t6656.0\n1450958303\tip-172-29-32-216\tREAD\tAverageLatency(us)\t4943.440655048077\n1450958303\tip-172-29-32-216\tREAD\tMinLatency(us)\t794.0\n1450958303\tip-172-29-32-216\tREAD\tMaxLatency(us)\t168703.0\n1450958303\tip-172-29-32-216\tREAD\t95thPercentileLatency(us)\t11047.0\n1450958303\tip-172-29-32-216\tREAD\t99thPercentileLatency(us)\t19295.0\n1450958303\tip-172-29-32-216\tREAD\tReturn\u003dOK\t6656.0\n1450958303\tip-172-29-32-216\tREAD-MODIFY-WRITE\tOperations\t3390.0\n1450958303\tip-172-29-32-216\tREAD-MODIFY-WRITE\tAverageLatency(us)\t9551.607374631269\n1450958303\tip-172-29-32-216\tREAD-MODIFY-WRITE\tMinLatency(us)\t1341.0\n1450958303\tip-172-29-32-216\tREAD-MODIFY-WRITE\tMaxLatency(us)\t171263.0\n1450958303\tip-172-29-32-216\tREAD-MODIFY-WRITE\t95thPercentileLatency(us)\t20895.0\n1450958303\tip-172-29-32-216\tREAD-MODIFY-WRITE\t99thPercentileLatency(us)\t30143.0\n1450958303\tip-172-29-32-216\tCLEANUP\tOperations\t8.0\n1450958303\tip-172-29-32-216\tCLEANUP\tAverageLatency(us)\t3565.75\n1450958303\tip-172-29-32-216\tCLEANUP\tMinLatency(us)\t1.0\n1450958303\tip-172-29-32-216\tCLEANUP\tMaxLatency(us)\t28511.0\n1450958303\tip-172-29-32-216\tCLEANUP\t95thPercentileLatency(us)\t28511.0\n1450958303\tip-172-29-32-216\tCLEANUP\t99thPercentileLatency(us)\t28511.0\n1450958303\tip-172-29-32-216\tUPDATE\tOperations\t6734.0\n1450958303\tip-172-29-32-216\tUPDATE\tAverageLatency(us)\t4599.356994356995\n1450958303\tip-172-29-32-216\tUPDATE\tMinLatency(us)\t475.0\n1450958303\tip-172-29-32-216\tUPDATE\tMaxLatency(us)\t168703.0\n1450958303\tip-172-29-32-216\tUPDATE\t95thPercentileLatency(us)\t11055.0\n1450958303\tip-172-29-32-216\tUPDATE\t99thPercentileLatency(us)\t19071.0\n1450958303\tip-172-29-32-216\tUPDATE\tReturn\u003dOK\t6734.0\n1450958453\tip-172-29-109-71\tOVERALL\tRunTime(ms)\t10025.0\n1450958453\tip-172-29-109-71\tOVERALL\tThroughput(ops/sec)\t997.5062344139651\n1450958453\tip-172-29-109-71\tREAD\tOperations\t6726.0\n1450958453\tip-172-29-109-71\tREAD\tAverageLatency(us)\t5521.626375260184\n1450958453\tip-172-29-109-71\tREAD\tMinLatency(us)\t735.0\n1450958453\tip-172-29-109-71\tREAD\tMaxLatency(us)\t178815.0\n1450958453\tip-172-29-109-71\tREAD\t95thPercentileLatency(us)\t12231.0\n1450958453\tip-172-29-109-71\tREAD\t99thPercentileLatency(us)\t20911.0\n1450958453\tip-172-29-109-71\tREAD\tReturn\u003dOK\t6726.0\n1450958453\tip-172-29-109-71\tREAD-MODIFY-WRITE\tOperations\t3424.0\n1450958453\tip-172-29-109-71\tREAD-MODIFY-WRITE\tAverageLatency(us)\t10347.591705607476\n1450958453\tip-172-29-109-71\tREAD-MODIFY-WRITE\tMinLatency(us)\t1414.0\n1450958453\tip-172-29-109-71\tREAD-MODIFY-WRITE\tMaxLatency(us)\t183679.0\n1450958453\tip-172-29-109-71\tREAD-MODIFY-WRITE\t95thPercentileLatency(us)\t22367.0\n1450958453\tip-172-29-109-71\tREAD-MODIFY-WRITE\t99thPercentileLatency(us)\t37631.0\n1450958453\tip-172-29-109-71\tCLEANUP\tOperations\t8.0\n1450958453\tip-172-29-109-71\tCLEANUP\tAverageLatency(us)\t2659.0\n1450958453\tip-172-29-109-71\tCLEANUP\tMinLatency(us)\t1.0\n1450958453\tip-172-29-109-71\tCLEANUP\tMaxLatency(us)\t21263.0\n1450958453\tip-172-29-109-71\tCLEANUP\t95thPercentileLatency(us)\t21263.0\n1450958453\tip-172-29-109-71\tCLEANUP\t99thPercentileLatency(us)\t21263.0\n1450958453\tip-172-29-109-71\tUPDATE\tOperations\t6698.0\n1450958453\tip-172-29-109-71\tUPDATE\tAverageLatency(us)\t5049.553299492386\n1450958453\tip-172-29-109-71\tUPDATE\tMinLatency(us)\t461.0\n1450958453\tip-172-29-109-71\tUPDATE\tMaxLatency(us)\t178815.0\n1450958453\tip-172-29-109-71\tUPDATE\t95thPercentileLatency(us)\t11967.0\n1450958453\tip-172-29-109-71\tUPDATE\t99thPercentileLatency(us)\t19983.0\n1450958453\tip-172-29-109-71\tUPDATE\tReturn\u003dOK\t6698.0\n"
       },
       "dateCreated": "Dec 21, 2015 1:03:20 PM",
-      "dateStarted": "Dec 21, 2015 1:53:03 PM",
-      "dateFinished": "Dec 21, 2015 2:00:28 PM",
+      "dateStarted": "Dec 24, 2015 12:02:28 PM",
+      "dateFinished": "Dec 24, 2015 12:02:32 PM",
+      "status": "FINISHED",
+      "progressUpdateIntervalMs": 500
+    },
+    {
+      "text": "%sql\nselect date_format(timestamp, \u0027HH:mm:ss\u0027), value from ycsbMetrics where operation \u003d \"${operation\u003dOVERALL}\" and measurement \u003d \"${measurement\u003dThroughput(ops/sec)}\"",
+      "dateUpdated": "Dec 24, 2015 12:13:05 PM",
+      "config": {
+        "colWidth": 12.0,
+        "graph": {
+          "mode": "table",
+          "height": 300.0,
+          "optionOpen": false,
+          "keys": [],
+          "values": [],
+          "groups": [],
+          "scatter": {}
+        }
+      },
+      "settings": {
+        "params": {},
+        "forms": {
+          "operation": {
+            "name": "operation",
+            "defaultValue": "OVERALL",
+            "hidden": false
+          },
+          "measurement": {
+            "name": "measurement",
+            "defaultValue": "Throughput(ops/sec)",
+            "hidden": false
+          }
+        }
+      },
+      "jobName": "paragraph_1450705855929_1104562423",
+      "id": "20151221-135055_715576399",
+      "result": {
+        "code": "ERROR",
+        "type": "TEXT",
+        "msg": "org.apache.spark.sql.AnalysisException: cannot resolve \u0027date_format(timestamp,HH:mm:ss)\u0027 due to data type mismatch: argument 1 requires timestamp type, however, \u0027timestamp\u0027 is of int type.; line 1 pos 30\n\tat org.apache.spark.sql.catalyst.analysis.package$AnalysisErrorAt.failAnalysis(package.scala:42)\n\tat org.apache.spark.sql.catalyst.analysis.CheckAnalysis$$anonfun$checkAnalysis$1$$anonfun$apply$2.applyOrElse(CheckAnalysis.scala:61)\n\tat org.apache.spark.sql.catalyst.analysis.CheckAnalysis$$anonfun$checkAnalysis$1$$anonfun$apply$2.applyOrElse(CheckAnalysis.scala:53)\n\tat org.apache.spark.sql.catalyst.trees.TreeNode$$anonfun$transformUp$1.apply(TreeNode.scala:293)\n\tat org.apache.spark.sql.catalyst.trees.TreeNode$$anonfun$transformUp$1.apply(TreeNode.scala:293)\n\tat org.apache.spark.sql.catalyst.trees.CurrentOrigin$.withOrigin(TreeNode.scala:51)\n\tat org.apache.spark.sql.catalyst.trees.TreeNode.transformUp(TreeNode.scala:292)\n\tat org.apache.spark.sql.catalyst.trees.TreeNode$$anonfun$5.apply(TreeNode.scala:290)\n\tat org.apache.spark.sql.catalyst.trees.TreeNode$$anonfun$5.apply(TreeNode.scala:290)\n\tat org.apache.spark.sql.catalyst.trees.TreeNode$$anonfun$4.apply(TreeNode.scala:249)\n\tat scala.collection.Iterator$$anon$11.next(Iterator.scala:328)\n\tat scala.collection.Iterator$class.foreach(Iterator.scala:727)\n\tat scala.collection.AbstractIterator.foreach(Iterator.scala:1157)\n\tat scala.collection.generic.Growable$class.$plus$plus$eq(Growable.scala:48)\n\tat scala.collection.mutable.ArrayBuffer.$plus$plus$eq(ArrayBuffer.scala:103)\n\tat scala.collection.mutable.ArrayBuffer.$plus$plus$eq(ArrayBuffer.scala:47)\n\tat scala.collection.TraversableOnce$class.to(TraversableOnce.scala:273)\n\tat scala.collection.AbstractIterator.to(Iterator.scala:1157)\n\tat scala.collection.TraversableOnce$class.toBuffer(TraversableOnce.scala:265)\n\tat scala.collection.AbstractIterator.toBuffer(Iterator.scala:1157)\n\tat scala.collection.TraversableOnce$class.toArray(TraversableOnce.scala:252)\n\tat scala.collection.AbstractIterator.toArray(Iterator.scala:1157)\n\tat org.apache.spark.sql.catalyst.trees.TreeNode.transformChildren(TreeNode.scala:279)\n\tat org.apache.spark.sql.catalyst.trees.TreeNode.transformUp(TreeNode.scala:290)\n\tat org.apache.spark.sql.catalyst.plans.QueryPlan.transformExpressionUp$1(QueryPlan.scala:107)\n\tat org.apache.spark.sql.catalyst.plans.QueryPlan.org$apache$spark$sql$catalyst$plans$QueryPlan$$recursiveTransform$2(QueryPlan.scala:117)\n\tat org.apache.spark.sql.catalyst.plans.QueryPlan$$anonfun$org$apache$spark$sql$catalyst$plans$QueryPlan$$recursiveTransform$2$1.apply(QueryPlan.scala:121)\n\tat scala.collection.TraversableLike$$anonfun$map$1.apply(TraversableLike.scala:244)\n\tat scala.collection.TraversableLike$$anonfun$map$1.apply(TraversableLike.scala:244)\n\tat scala.collection.mutable.ResizableArray$class.foreach(ResizableArray.scala:59)\n\tat scala.collection.mutable.ArrayBuffer.foreach(ArrayBuffer.scala:47)\n\tat scala.collection.TraversableLike$class.map(TraversableLike.scala:244)\n\tat scala.collection.AbstractTraversable.map(Traversable.scala:105)\n\tat org.apache.spark.sql.catalyst.plans.QueryPlan.org$apache$spark$sql$catalyst$plans$QueryPlan$$recursiveTransform$2(QueryPlan.scala:121)\n\tat org.apache.spark.sql.catalyst.plans.QueryPlan$$anonfun$2.apply(QueryPlan.scala:125)\n\tat scala.collection.Iterator$$anon$11.next(Iterator.scala:328)\n\tat scala.collection.Iterator$class.foreach(Iterator.scala:727)\n\tat scala.collection.AbstractIterator.foreach(Iterator.scala:1157)\n\tat scala.collection.generic.Growable$class.$plus$plus$eq(Growable.scala:48)\n\tat scala.collection.mutable.ArrayBuffer.$plus$plus$eq(ArrayBuffer.scala:103)\n\tat scala.collection.mutable.ArrayBuffer.$plus$plus$eq(ArrayBuffer.scala:47)\n\tat scala.collection.TraversableOnce$class.to(TraversableOnce.scala:273)\n\tat scala.collection.AbstractIterator.to(Iterator.scala:1157)\n\tat scala.collection.TraversableOnce$class.toBuffer(TraversableOnce.scala:265)\n\tat scala.collection.AbstractIterator.toBuffer(Iterator.scala:1157)\n\tat scala.collection.TraversableOnce$class.toArray(TraversableOnce.scala:252)\n\tat scala.collection.AbstractIterator.toArray(Iterator.scala:1157)\n\tat org.apache.spark.sql.catalyst.plans.QueryPlan.transformExpressionsUp(QueryPlan.scala:125)\n\tat org.apache.spark.sql.catalyst.analysis.CheckAnalysis$$anonfun$checkAnalysis$1.apply(CheckAnalysis.scala:53)\n\tat org.apache.spark.sql.catalyst.analysis.CheckAnalysis$$anonfun$checkAnalysis$1.apply(CheckAnalysis.scala:49)\n\tat org.apache.spark.sql.catalyst.trees.TreeNode.foreachUp(TreeNode.scala:103)\n\tat org.apache.spark.sql.catalyst.analysis.CheckAnalysis$class.checkAnalysis(CheckAnalysis.scala:49)\n\tat org.apache.spark.sql.catalyst.analysis.Analyzer.checkAnalysis(Analyzer.scala:44)\n\tat org.apache.spark.sql.SQLContext$QueryExecution.assertAnalyzed(SQLContext.scala:914)\n\tat org.apache.spark.sql.DataFrame.\u003cinit\u003e(DataFrame.scala:132)\n\tat org.apache.spark.sql.DataFrame$.apply(DataFrame.scala:51)\n\tat org.apache.spark.sql.SQLContext.sql(SQLContext.scala:725)\n\tat sun.reflect.GeneratedMethodAccessor43.invoke(Unknown Source)\n\tat sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)\n\tat java.lang.reflect.Method.invoke(Method.java:497)\n\tat org.apache.zeppelin.spark.SparkSqlInterpreter.interpret(SparkSqlInterpreter.java:136)\n\tat org.apache.zeppelin.interpreter.ClassloaderInterpreter.interpret(ClassloaderInterpreter.java:57)\n\tat org.apache.zeppelin.interpreter.LazyOpenInterpreter.interpret(LazyOpenInterpreter.java:93)\n\tat org.apache.zeppelin.interpreter.remote.RemoteInterpreterServer$InterpretJob.jobRun(RemoteInterpreterServer.java:276)\n\tat org.apache.zeppelin.scheduler.Job.run(Job.java:170)\n\tat org.apache.zeppelin.scheduler.FIFOScheduler$1.run(FIFOScheduler.java:118)\n\tat java.util.concurrent.Executors$RunnableAdapter.call(Executors.java:511)\n\tat java.util.concurrent.FutureTask.run(FutureTask.java:266)\n\tat java.util.concurrent.ScheduledThreadPoolExecutor$ScheduledFutureTask.access$201(ScheduledThreadPoolExecutor.java:180)\n\tat java.util.concurrent.ScheduledThreadPoolExecutor$ScheduledFutureTask.run(ScheduledThreadPoolExecutor.java:293)\n\tat java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1142)\n\tat java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:617)\n\tat java.lang.Thread.run(Thread.java:745)\n"
+      },
+      "dateCreated": "Dec 21, 2015 1:50:55 PM",
+      "dateStarted": "Dec 24, 2015 12:13:05 PM",
+      "dateFinished": "Dec 24, 2015 12:13:06 PM",
+      "status": "ERROR",
+      "progressUpdateIntervalMs": 500
+    },
+    {
+      "text": "%sql\nselect date_format(cast(1450890593000 as timestamp), \u0027yyyy-MM-dd HH:mm:ss\u0027)",
+      "dateUpdated": "Dec 24, 2015 12:20:12 PM",
+      "config": {
+        "colWidth": 12.0,
+        "graph": {
+          "mode": "table",
+          "height": 300.0,
+          "optionOpen": false,
+          "keys": [
+            {
+              "name": "_c0",
+              "index": 0.0,
+              "aggr": "sum"
+            }
+          ],
+          "values": [],
+          "groups": [],
+          "scatter": {
+            "xAxis": {
+              "name": "_c0",
+              "index": 0.0,
+              "aggr": "sum"
+            }
+          }
+        },
+        "editorMode": "ace/mode/sql"
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "jobName": "paragraph_1450958637356_-1894479573",
+      "id": "20151224-120357_1049889099",
+      "result": {
+        "code": "SUCCESS",
+        "type": "TABLE",
+        "msg": "_c0\n2015-12-23 17:09:53\n"
+      },
+      "dateCreated": "Dec 24, 2015 12:03:57 PM",
+      "dateStarted": "Dec 24, 2015 12:20:12 PM",
+      "dateFinished": "Dec 24, 2015 12:20:12 PM",
       "status": "FINISHED",
       "progressUpdateIntervalMs": 500
     },
@@ -238,9 +340,9 @@
         "params": {},
         "forms": {}
       },
-      "jobName": "paragraph_1450705855929_1104562423",
-      "id": "20151221-135055_715576399",
-      "dateCreated": "Dec 21, 2015 1:50:55 PM",
+      "jobName": "paragraph_1450959364248_1927075245",
+      "id": "20151224-121604_759454573",
+      "dateCreated": "Dec 24, 2015 12:16:04 PM",
       "status": "READY",
       "progressUpdateIntervalMs": 500
     }
@@ -262,6 +364,8 @@
     "2B86K7D7B": [],
     "2B8736GXY": []
   },
-  "config": {},
+  "config": {
+    "looknfeel": "default"
+  },
   "info": {}
 }
