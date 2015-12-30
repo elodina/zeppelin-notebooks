@@ -1,0 +1,187 @@
+{
+  "paragraphs": [
+    {
+      "text": "import com.datastax.spark.connector._ \nimport net.elodina.collectd.ByteKafkaDecoder\nimport net.elodina.collectd.Metric\nimport net.elodina.collectd.StringKafkaDecoder\nimport java.text.SimpleDateFormat\nimport java.util.Date\n\ncase class InitialData(key: Array[Byte], value: Array[Byte])\ncase class CPUMetric(date: String, hostname: String, value: java.lang.Double)\n\ndef run : Unit \u003d {\n  val hourPreciseDateF \u003d new SimpleDateFormat(\"yyyy-MM-dd HH:00:00\")\n  val datePattern \u003d \"yyyy-MM-dd HH:mm:ss\"\n  val completeDateF \u003d new SimpleDateFormat(datePattern)\n  val rawStartDate \u003d z.input(\"1. Start Date\", \"2015-12-29 09:23:39\").toString()\n  val rawEndDate \u003d z.input(\"2. End Date\", \"2015-12-29 09:33:39\").toString()\n  Try(completeDateF.parse(rawStartDate)).getOrElse { println(s\"ERROR! Please provide valid date with $datePattern pattern\"); return }\n  Try(completeDateF.parse(rawEndDate)).getOrElse { println(s\"ERROR! Please provide valid date with $datePattern pattern\"); return }\n  val formattedHour \u003d hourPreciseDateF.format(completeDateF.parse(rawStartDate))\n  val aggregateWindow \u003d 60 * 1000\n  println(s\"Getting CPU metrics for dates: $rawStartDate | $rawEndDate\")\n  val cpuMetrics \u003d sc.cassandraTable[InitialData](\"stockpile_test\", \"stats\").select(\"key\", \"value\").where(s\"hour \u003d \u0027${formattedHour}\u0027 AND topic \u003d \u0027collectd\u0027 AND timeid \u003e\u003d maxtimeuuid(\u0027${rawStartDate}\u0027) AND timeid \u003c\u003d mintimeuuid(\u0027${rawEndDate}\u0027)\")\n    .filter {\n      x \u003d\u003e\n        val plugin \u003d new String(x.key, \"UTF8\")\n        plugin \u003d\u003d \"cpu\"\n    }\n    .map {\n      x \u003d\u003e\n        val decoder \u003d DecoderFactory.get().binaryDecoder(x.value, null)\n        val record: GenericRecord \u003d new SpecificDatumReader[GenericRecord](Metric.getClassSchema()).read(null, decoder)\n        val completeDate \u003d new SimpleDateFormat(\"yyyy-MM-dd HH:mm:ss\")\n        ((record.get(\"hostname\").asInstanceOf[String], record.get(\"time\").asInstanceOf[java.lang.Long] / aggregateWindow), (record.get(\"values\").asInstanceOf[GenericData.Array[java.lang.Double]].asScala.headOption.getOrElse(new java.lang.Double(0.0)), 1))\n    }\n    .reduceByKey { case ((val1, count1), (val2, count2)) \u003d\u003e ((val1 + val2), (count1 + count2)) }\n    .map {\n      case ((hostname, time), (sum, count)) \u003d\u003e\n          CPUMetric(new SimpleDateFormat(\"yyyy-MM-dd HH:mm:ss\").format(new Date(time * aggregateWindow)), hostname, sum/count)\n    }.toDF()\n    cpuMetrics.registerTempTable(\"timedCPUMetrics\")\n    //.collect().foreach(println)\n}\n\nrun",
+      "dateUpdated": "Dec 30, 2015 11:56:37 AM",
+      "config": {
+        "colWidth": 6.0,
+        "graph": {
+          "mode": "table",
+          "height": 300.0,
+          "optionOpen": false,
+          "keys": [],
+          "values": [],
+          "groups": [],
+          "scatter": {}
+        },
+        "editorMode": "ace/mode/scala",
+        "editorHide": true
+      },
+      "settings": {
+        "params": {
+          "End Date": "2015-12-29 09:33:39",
+          "Start Date": "2015-12-29 09:23:39",
+          "2. End Date": "2015-12-29 11:50:05",
+          "1. Start Date": "2015-12-29 11:35:05"
+        },
+        "forms": {
+          "1. Start Date": {
+            "name": "1. Start Date",
+            "displayName": "1. Start Date",
+            "defaultValue": "2015-12-29 09:23:39",
+            "hidden": false
+          },
+          "2. End Date": {
+            "name": "2. End Date",
+            "displayName": "2. End Date",
+            "defaultValue": "2015-12-29 09:33:39",
+            "hidden": false
+          }
+        }
+      },
+      "jobName": "paragraph_1450961040576_-1383082423",
+      "id": "20151224-124400_1709537370",
+      "result": {
+        "code": "SUCCESS",
+        "type": "TEXT",
+        "msg": "import com.datastax.spark.connector._\nimport net.elodina.collectd.ByteKafkaDecoder\nimport net.elodina.collectd.Metric\nimport net.elodina.collectd.StringKafkaDecoder\nimport java.text.SimpleDateFormat\nimport java.util.Date\ndefined class InitialData\ndefined class CPUMetric\nrun: Unit\nGetting CPU metrics for dates: 2015-12-29 11:35:05 | 2015-12-29 11:50:05\n"
+      },
+      "dateCreated": "Dec 24, 2015 12:44:00 PM",
+      "dateStarted": "Dec 30, 2015 11:56:37 AM",
+      "dateFinished": "Dec 30, 2015 11:58:16 AM",
+      "status": "FINISHED",
+      "progressUpdateIntervalMs": 500
+    },
+    {
+      "text": "println(s\"Current server time: ${new java.text.SimpleDateFormat(\"yyyy-MM-dd HH:mm:ss\").format(new Date())}\")",
+      "dateUpdated": "Dec 30, 2015 11:51:42 AM",
+      "config": {
+        "colWidth": 6.0,
+        "graph": {
+          "mode": "table",
+          "height": 300.0,
+          "optionOpen": false,
+          "keys": [],
+          "values": [],
+          "groups": [],
+          "scatter": {}
+        },
+        "editorMode": "ace/mode/scala",
+        "editorHide": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "jobName": "paragraph_1451382297422_115232554",
+      "id": "20151229-094457_1996485244",
+      "result": {
+        "code": "SUCCESS",
+        "type": "TEXT",
+        "msg": "Current server time: 2015-12-30 11:46:53\n"
+      },
+      "dateCreated": "Dec 29, 2015 9:44:57 AM",
+      "dateStarted": "Dec 30, 2015 11:46:48 AM",
+      "dateFinished": "Dec 30, 2015 11:47:00 AM",
+      "status": "FINISHED",
+      "progressUpdateIntervalMs": 500
+    },
+    {
+      "text": "%sql\nselect * from timedCPUMetrics order by date",
+      "dateUpdated": "Dec 30, 2015 11:58:26 AM",
+      "config": {
+        "colWidth": 12.0,
+        "graph": {
+          "mode": "lineChart",
+          "height": 300.0,
+          "optionOpen": false,
+          "keys": [
+            {
+              "name": "date",
+              "index": 0.0,
+              "aggr": "sum"
+            }
+          ],
+          "values": [
+            {
+              "name": "value",
+              "index": 2.0,
+              "aggr": "sum"
+            }
+          ],
+          "groups": [
+            {
+              "name": "hostname",
+              "index": 1.0,
+              "aggr": "sum"
+            }
+          ],
+          "scatter": {
+            "xAxis": {
+              "name": "date",
+              "index": 0.0,
+              "aggr": "sum"
+            },
+            "yAxis": {
+              "name": "hostname",
+              "index": 1.0,
+              "aggr": "sum"
+            }
+          },
+          "lineWithFocus": false
+        },
+        "editorMode": "ace/mode/sql",
+        "editorHide": false
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "jobName": "paragraph_1451385940675_1546168432",
+      "id": "20151229-104540_1266980761",
+      "result": {
+        "code": "SUCCESS",
+        "type": "TABLE",
+        "msg": "date\thostname\tvalue\n2015-12-29 11:35:00\tip-172-29-27-92.node.mesosinfra\t0.31917953866444276\n2015-12-29 11:35:00\tip-172-29-109-71.node.mesosinfra\t0.6959946092150566\n2015-12-29 11:35:00\tip-172-29-132-183.node.mesosinfra\t0.6839344217963577\n2015-12-29 11:35:00\tip-172-29-47-108.node.mesosinfra\t0.48959482753003253\n2015-12-29 11:35:00\tip-172-29-32-216.node.mesosinfra\t0.34957439902791804\n2015-12-29 11:35:00\tip-172-29-203-242.node.mesosinfra\t0.5703737198220259\n2015-12-29 11:35:00\tip-172-29-169-91.node.mesosinfra\t0.28911780756917493\n2015-12-29 11:36:00\tip-172-29-169-91.node.mesosinfra\t0.2973036144775898\n2015-12-29 11:36:00\tip-172-29-32-216.node.mesosinfra\t0.3325738035723838\n2015-12-29 11:36:00\tip-172-29-132-183.node.mesosinfra\t0.692286709963578\n2015-12-29 11:36:00\tip-172-29-47-108.node.mesosinfra\t0.5065200977660068\n2015-12-29 11:36:00\tip-172-29-109-71.node.mesosinfra\t0.7688938158833633\n2015-12-29 11:36:00\tip-172-29-27-92.node.mesosinfra\t0.47067918389770647\n2015-12-29 11:36:00\tip-172-29-203-242.node.mesosinfra\t0.6167596845749311\n2015-12-29 11:37:00\tip-172-29-32-216.node.mesosinfra\t0.3535862462411819\n2015-12-29 11:37:00\tip-172-29-203-242.node.mesosinfra\t0.5608708025945788\n2015-12-29 11:37:00\tip-172-29-132-183.node.mesosinfra\t0.7182520708799854\n2015-12-29 11:37:00\tip-172-29-47-108.node.mesosinfra\t0.6122910743871994\n2015-12-29 11:37:00\tip-172-29-109-71.node.mesosinfra\t0.7604667387476769\n2015-12-29 11:37:00\tip-172-29-27-92.node.mesosinfra\t0.3444627449411312\n2015-12-29 11:37:00\tip-172-29-169-91.node.mesosinfra\t0.2846735887921683\n2015-12-29 11:38:00\tip-172-29-109-71.node.mesosinfra\t0.7185710771773328\n2015-12-29 11:38:00\tip-172-29-203-242.node.mesosinfra\t0.5697838997486191\n2015-12-29 11:38:00\tip-172-29-169-91.node.mesosinfra\t0.276357122379248\n2015-12-29 11:38:00\tip-172-29-27-92.node.mesosinfra\t0.3524788703199002\n2015-12-29 11:38:00\tip-172-29-47-108.node.mesosinfra\t0.5960443885070652\n2015-12-29 11:38:00\tip-172-29-32-216.node.mesosinfra\t0.3402127360881832\n2015-12-29 11:38:00\tip-172-29-132-183.node.mesosinfra\t0.7141652488113271\n2015-12-29 11:39:00\tip-172-29-169-91.node.mesosinfra\t0.3896802234511018\n2015-12-29 11:39:00\tip-172-29-203-242.node.mesosinfra\t0.6130608780678712\n2015-12-29 11:39:00\tip-172-29-109-71.node.mesosinfra\t0.731278068370128\n2015-12-29 11:39:00\tip-172-29-47-108.node.mesosinfra\t0.5278589622064552\n2015-12-29 11:39:00\tip-172-29-27-92.node.mesosinfra\t0.33162794855104905\n2015-12-29 11:39:00\tip-172-29-32-216.node.mesosinfra\t0.3498587836147149\n2015-12-29 11:39:00\tip-172-29-132-183.node.mesosinfra\t0.6799352432672968\n2015-12-29 11:40:00\tip-172-29-32-216.node.mesosinfra\t0.34503368903246545\n2015-12-29 11:40:00\tip-172-29-47-108.node.mesosinfra\t0.5021606286230482\n2015-12-29 11:40:00\tip-172-29-203-242.node.mesosinfra\t0.5408615836415366\n2015-12-29 11:40:00\tip-172-29-109-71.node.mesosinfra\t0.6810598372010457\n2015-12-29 11:40:00\tip-172-29-169-91.node.mesosinfra\t0.2932804987078186\n2015-12-29 11:40:00\tip-172-29-27-92.node.mesosinfra\t0.2979418305965859\n2015-12-29 11:40:00\tip-172-29-132-183.node.mesosinfra\t0.7913491748881728\n2015-12-29 11:41:00\tip-172-29-132-183.node.mesosinfra\t0.752658059941298\n2015-12-29 11:41:00\tip-172-29-47-108.node.mesosinfra\t0.48994155225999436\n2015-12-29 11:41:00\tip-172-29-32-216.node.mesosinfra\t0.3333497524999862\n2015-12-29 11:41:00\tip-172-29-203-242.node.mesosinfra\t0.7573294946124656\n2015-12-29 11:41:00\tip-172-29-27-92.node.mesosinfra\t0.3190185288143154\n2015-12-29 11:41:00\tip-172-29-109-71.node.mesosinfra\t0.7020145587540597\n2015-12-29 11:41:00\tip-172-29-169-91.node.mesosinfra\t0.3140037742076433\n2015-12-29 11:42:00\tip-172-29-132-183.node.mesosinfra\t0.7186093793708483\n2015-12-29 11:42:00\tip-172-29-169-91.node.mesosinfra\t0.2803849589170168\n2015-12-29 11:42:00\tip-172-29-32-216.node.mesosinfra\t0.3373780881910362\n2015-12-29 11:42:00\tip-172-29-27-92.node.mesosinfra\t0.32321500985859014\n2015-12-29 11:42:00\tip-172-29-109-71.node.mesosinfra\t0.7226145915449399\n2015-12-29 11:42:00\tip-172-29-47-108.node.mesosinfra\t0.47290585061571866\n2015-12-29 11:42:00\tip-172-29-203-242.node.mesosinfra\t0.6943409874358486\n2015-12-29 11:43:00\tip-172-29-32-216.node.mesosinfra\t0.3539858414813955\n2015-12-29 11:43:00\tip-172-29-109-71.node.mesosinfra\t0.7482568602015006\n2015-12-29 11:43:00\tip-172-29-169-91.node.mesosinfra\t0.2803302926094921\n2015-12-29 11:43:00\tip-172-29-27-92.node.mesosinfra\t0.32313903363793495\n2015-12-29 11:43:00\tip-172-29-203-242.node.mesosinfra\t0.6087981119333822\n2015-12-29 11:43:00\tip-172-29-132-183.node.mesosinfra\t0.7099855061985078\n2015-12-29 11:43:00\tip-172-29-47-108.node.mesosinfra\t0.726945908560694\n2015-12-29 11:44:00\tip-172-29-109-71.node.mesosinfra\t0.7356314850522242\n2015-12-29 11:44:00\tip-172-29-132-183.node.mesosinfra\t0.7140810499081681\n2015-12-29 11:44:00\tip-172-29-27-92.node.mesosinfra\t0.36116583644321937\n2015-12-29 11:44:00\tip-172-29-169-91.node.mesosinfra\t0.29711032777807683\n2015-12-29 11:44:00\tip-172-29-32-216.node.mesosinfra\t0.3877570349652167\n2015-12-29 11:44:00\tip-172-29-47-108.node.mesosinfra\t0.4985082516613555\n2015-12-29 11:44:00\tip-172-29-203-242.node.mesosinfra\t0.686397951786438\n2015-12-29 11:45:00\tip-172-29-47-108.node.mesosinfra\t0.5150366336556017\n2015-12-29 11:45:00\tip-172-29-27-92.node.mesosinfra\t0.3483700526572782\n2015-12-29 11:45:00\tip-172-29-132-183.node.mesosinfra\t0.7444183464008947\n2015-12-29 11:45:00\tip-172-29-169-91.node.mesosinfra\t0.28883590719397406\n2015-12-29 11:45:00\tip-172-29-203-242.node.mesosinfra\t0.7028605726579805\n2015-12-29 11:45:00\tip-172-29-109-71.node.mesosinfra\t0.6977591990064965\n2015-12-29 11:45:00\tip-172-29-32-216.node.mesosinfra\t0.34647475178244375\n2015-12-29 11:46:00\tip-172-29-109-71.node.mesosinfra\t0.7395010523380247\n2015-12-29 11:46:00\tip-172-29-203-242.node.mesosinfra\t0.5920970502182339\n2015-12-29 11:46:00\tip-172-29-169-91.node.mesosinfra\t0.2846061480505743\n2015-12-29 11:46:00\tip-172-29-27-92.node.mesosinfra\t0.2936571437139955\n2015-12-29 11:46:00\tip-172-29-47-108.node.mesosinfra\t0.5063959199475428\n2015-12-29 11:46:00\tip-172-29-32-216.node.mesosinfra\t0.3459649859241986\n2015-12-29 11:46:00\tip-172-29-132-183.node.mesosinfra\t0.8346878298599996\n2015-12-29 11:47:00\tip-172-29-27-92.node.mesosinfra\t0.33140858885838226\n2015-12-29 11:47:00\tip-172-29-203-242.node.mesosinfra\t0.5841247340043266\n2015-12-29 11:47:00\tip-172-29-109-71.node.mesosinfra\t0.7106724312561256\n2015-12-29 11:47:00\tip-172-29-32-216.node.mesosinfra\t0.3543029505812523\n2015-12-29 11:47:00\tip-172-29-169-91.node.mesosinfra\t0.27622260537724347\n2015-12-29 11:47:00\tip-172-29-132-183.node.mesosinfra\t0.7575332479729361\n2015-12-29 11:47:00\tip-172-29-47-108.node.mesosinfra\t0.4811376186564738\n2015-12-29 11:48:00\tip-172-29-203-242.node.mesosinfra\t0.5752212269221703\n2015-12-29 11:48:00\tip-172-29-32-216.node.mesosinfra\t0.3300055322950383\n2015-12-29 11:48:00\tip-172-29-27-92.node.mesosinfra\t0.3232660410579782\n2015-12-29 11:48:00\tip-172-29-132-183.node.mesosinfra\t0.7228343895280513\n2015-12-29 11:48:00\tip-172-29-169-91.node.mesosinfra\t0.4063206070345439\n2015-12-29 11:48:00\tip-172-29-47-108.node.mesosinfra\t0.493948415847016\n2015-12-29 11:48:00\tip-172-29-109-71.node.mesosinfra\t0.7730559767078833\n2015-12-29 11:49:00\tip-172-29-32-216.node.mesosinfra\t0.3540368595347327\n2015-12-29 11:49:00\tip-172-29-132-183.node.mesosinfra\t0.7230957833145636\n2015-12-29 11:49:00\tip-172-29-109-71.node.mesosinfra\t0.7270980941333733\n2015-12-29 11:49:00\tip-172-29-27-92.node.mesosinfra\t0.31053778366164314\n2015-12-29 11:49:00\tip-172-29-47-108.node.mesosinfra\t0.4729254441466109\n2015-12-29 11:49:00\tip-172-29-203-242.node.mesosinfra\t0.5621322620488299\n2015-12-29 11:49:00\tip-172-29-169-91.node.mesosinfra\t0.28912215539719943\n2015-12-29 11:50:00\tip-172-29-109-71.node.mesosinfra\t0.8584883593539261\n"
+      },
+      "dateCreated": "Dec 29, 2015 10:45:40 AM",
+      "dateStarted": "Dec 30, 2015 11:58:26 AM",
+      "dateFinished": "Dec 30, 2015 11:58:27 AM",
+      "status": "FINISHED",
+      "progressUpdateIntervalMs": 500
+    },
+    {
+      "config": {},
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "jobName": "paragraph_1451400931414_1606039390",
+      "id": "20151229-145531_1775386527",
+      "dateCreated": "Dec 29, 2015 2:55:31 PM",
+      "status": "READY",
+      "progressUpdateIntervalMs": 500
+    }
+  ],
+  "name": "Elodina static",
+  "id": "2B7BGTFJ6",
+  "angularObjects": {
+    "2B5JNYQG9": [],
+    "2B77KRQ7B": [],
+    "2B5UBR2T1": [],
+    "2B61KFHHB": [],
+    "2B71TKRAX": [],
+    "2B6N7TAWJ": [],
+    "2B5T4Y134": [],
+    "2B64GJ4E8": [],
+    "2B85P8F63": [],
+    "2B59ACF1Z": [],
+    "2B64D415T": [],
+    "2B86K7D7B": [],
+    "2B8736GXY": []
+  },
+  "config": {
+    "looknfeel": "default"
+  },
+  "info": {}
+}
