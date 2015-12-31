@@ -1,0 +1,90 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <title>Zeppelin-notebooks by elodina</title>
+
+    <link rel="stylesheet" href="stylesheets/styles.css">
+    <link rel="stylesheet" href="stylesheets/github-light.css">
+    <meta name="viewport" content="width=device-width">
+    <!--[if lt IE 9]>
+    <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+  </head>
+  <body>
+    <div class="wrapper">
+      <header>
+        <h1>Zeppelin-notebooks</h1>
+        <p>Apache Zeppelin notebooks for YCSB</p>
+
+        <p class="view"><a href="https://github.com/elodina/zeppelin-notebooks">View the Project on GitHub <small>elodina/zeppelin-notebooks</small></a></p>
+
+
+        <ul>
+          <li><a href="https://github.com/elodina/zeppelin-notebooks/zipball/master">Download <strong>ZIP File</strong></a></li>
+          <li><a href="https://github.com/elodina/zeppelin-notebooks/tarball/master">Download <strong>TAR Ball</strong></a></li>
+          <li><a href="https://github.com/elodina/zeppelin-notebooks">View On <strong>GitHub</strong></a></li>
+        </ul>
+      </header>
+      <section>
+        <h1>
+<a id="zeppelin-notebooks" class="anchor" href="#zeppelin-notebooks" aria-hidden="true"><span class="octicon octicon-link"></span></a>Zeppelin Notebooks</h1>
+
+<p>Contains required configurations and bootstrap notebooks for Apache Zeppelin.</p>
+
+<h3>
+<a id="running-on-marathon" class="anchor" href="#running-on-marathon" aria-hidden="true"><span class="octicon octicon-link"></span></a>Running on Marathon</h3>
+
+<p><code>marathon</code> dir contains necessary files for running Zeppelin with supplied bootstrap notebooks and configurations 
+on Marathon. In order to gather all necessary files in one dir:</p>
+
+<pre><code>./marathon-build.sh
+</code></pre>
+
+<p>To run on Marathon, upload all the files of the <code>build</code> directory somewhere, where <code>marathon/zeppelin.json</code> would be 
+able to reach them. In order to run against Marathon:</p>
+
+<pre><code>curl -X PUT -d@zeppelin.json -H "Content-Type: application/json" http://leader.mesos.service:18080/v2/apps/zeppelin
+</code></pre>
+
+<h3>
+<a id="export-notebooks-and-configurations" class="anchor" href="#export-notebooks-and-configurations" aria-hidden="true"><span class="octicon octicon-link"></span></a>Export notebooks and configurations</h3>
+
+<p>After you have created and tested your notebooks, and want to export them, for example to launch them at Zeppelin start 
+up, you should copy <code>notebook/&lt;notebook-id&gt;</code> folder from the Zeppelin running directory. So, for example, if running
+on Marathon, go to your Mesos UI, see where on the Mesos slave Zeppelin instance is running, and copy desired notebook 
+<code>note.json</code> via scp:</p>
+
+<pre><code>scp centos@slave0:/&lt;path-to-zeppelin-dir&gt;/notebook/&lt;notebook-id&gt;/note.json notebook/&lt;notebook-id&gt;/
+</code></pre>
+
+<p>You may also want to export your interpreter configurations, if want them to be applied on start up. In this case all 
+you need to do is to copy your <code>conf/interpreter.json</code>. When running on Marathon exporting it would look like this:</p>
+
+<pre><code>scp centos@slave0:/&lt;path-to-zeppelin-dir&gt;/conf/interpreter.json conf/
+</code></pre>
+
+<h3>
+<a id="notebook-jar-dependencies" class="anchor" href="#notebook-jar-dependencies" aria-hidden="true"><span class="octicon octicon-link"></span></a>Notebook jar dependencies</h3>
+
+<p>If there are some jar dependencies needed to be provided for running your notebooks, place them into <code>notebook-deps</code> 
+directory. They will be provided along with Zeppelin dist, when you deploy the app with Marathon. You will be able to 
+load them as a dependency by running the following paragraph:</p>
+
+<pre><code>%dep
+z.load("../notebook-deps/&lt;jar-name&gt;.jar")
+</code></pre>
+
+<p><strong>NOTE:</strong> This should be run <em>before</em> launching Spark interpreter, which means before any Spark paragraphs, in other 
+case Zeppelin should be restarted</p>
+      </section>
+      <footer>
+        <p>This project is maintained by <a href="https://github.com/elodina">elodina</a></p>
+        <p><small>Hosted on GitHub Pages &mdash; Theme by <a href="https://github.com/orderedlist">orderedlist</a></small></p>
+      </footer>
+    </div>
+    <script src="javascripts/scale.fix.js"></script>
+    
+  </body>
+</html>
