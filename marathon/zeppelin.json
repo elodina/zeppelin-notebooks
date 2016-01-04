@@ -1,7 +1,7 @@
 {
   "id": "zeppelin",
   "cpus": 2,
-  "mem": 12288,
+  "mem": 5120,
   "instances": 1,
   "cmd": "chmod +x deploy-zeppelin.sh && ./deploy-zeppelin.sh",
   "ports":[4040,31988],
