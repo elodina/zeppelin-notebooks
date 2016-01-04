@@ -214,7 +214,6 @@
         "zeppelin.spark.maxResult": "1000",
         "zeppelin.dep.localrepo": "local-repo",
         "spark.app.name": "Zeppelin",
-        "spark.executor.memory": "5000m",
         "zeppelin.spark.useHiveContext": "true",
         "zeppelin.spark.concurrentSQL": "false",
         "spark.home": "",
