@@ -18,6 +18,43 @@ able to reach them. In order to run against Marathon:
 curl -X PUT -d@zeppelin.json -H "Content-Type: application/json" http://leader.mesos.service:18080/v2/apps/zeppelin
 ```
 
+#### Configure resources
+
+Zeppelin and Spark related settings are configured in conf/zeppelin-env.sh
+however it has sensible defaults, thus you can use it as is.
+
+Marathon environment variables
+
+    SPARK_HOME - the directory in which Spark is installed on the executors in Mesos (default: /opt/spark)
+    (configures spark.mesos.executor.home, spark.home) (see: http://spark.apache.org/docs/1.5.1/running-on-mesos.html)
+
+    DRIVER_MEMORY - amount of memory to use for the driver process (default: 1536M)
+    (NOTE: Zeppelin runs driver program in subprocess, this option sets -Xmx for it)
+
+    EXECUTOR_MEMORY - amount of memory to use per executor process (default: 2560M)
+    (configures: spark.executor.memory)
+
+    CORES_MAX - the maximum amount of CPU cores to request for the application from across the cluster (not from each machine)
+    (default: 6) (configures: spark.cores.max)
+
+    SPARK_CASSANDRA_CONNECTION_HOST - the Cassandra host
+    (default: cassandra-node-0.service) (configures: spark.cassandra.connection.host)
+
+
+    Usually you don't have to configure following, however if you really need to then
+
+    ZEPPELIN_MEM - the Xmx for Zeppelin server and possibly additional GC settings
+    (default: -Xmx1024m -XX:MaxPermSize=512m)
+
+    ZEPPELIN_INTP_MEM - the Xmx for Zeppelin interpreter
+    (default: -Xmx$DRIVER_MEMORY -XX:MaxPermSize=512m)
+
+    ZEPPELIN_JAVA_OPTS - the options for Zeppelin server (using them to pass Spark options, since its the process that spawns everything else)
+    (default: -Dspark.home=$SPARK_HOME -Dspark.driver.memory=$DRIVER_MEMORY -Dspark.executor.memory=$EXECUTOR_MEMORY -Dspark.cores.max=$CORES_MAX -Dspark.ui.port=${PORT0-4040})
+
+    NOTE: Marathon exports env variable PORT0 which configures spark.ui.port
+
+
 ### Export notebooks and configurations
 
 After you have created and tested your notebooks, and want to export them, for example to launch them at Zeppelin start 
